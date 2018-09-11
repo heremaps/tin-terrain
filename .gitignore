@@ -1,0 +1,8 @@
+*.DS_Store
+build*/
+.kdev4/
+*.kdev4
+.vscode
+3rdparty/
+scripts/benchmarkcsv2pdf/tin_terrain_benchmarks.csv.pdf
+
