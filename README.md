@@ -154,7 +154,6 @@ You can see all available options by running `tin-terrain dem2tin --help`.
 
 ```
 $ tin-terrain dem2tin --help
-subcommand_dem2tin
 usage:
   tin-terrain dem2tin [OPTIONS]...
 
@@ -165,7 +164,7 @@ dem2tin options:
   --output arg                output filename
   --output-format arg (=auto) output file format, can be any of: auto, obj,
                               off, terrain (quantized mesh), json/geojson
-  --method arg (=terra)       meshing method, valid values are: terra
+  --method arg (=terra)       meshing method, valid values are: terra, zemlya
   --max-error arg             (terra) maximum geometric error
   --max-factor arg            (simple) set point if gradient is this percentage
                               from local maxima
@@ -175,9 +174,12 @@ dem2tin options:
 
 methods:
   terra     - implements a delaunay based triangulation with point selection using a fast greedy insert mechnism
-    see "M. Garland and P. Heckbert. Fast Polygonal Approximation of Terrains and Height Fields. Technical Report CMU-CS-95-181"
+    reference: Garland, Michael, and Paul S. Heckbert. "Fast polygonal approximation of terrains and height fields." (1995).
     paper: https://mgarland.org/papers/scape.pdf
     and http://mgarland.org/archive/cmu/scape/terra.html
+  zemlya    - hierarchical greedy insertion
+    reference: Zheng, Xianwei, et al. "A VIRTUAL GLOBE-BASED MULTI-RESOLUTION TIN SURFACE MODELING AND VISUALIZETION METHOD." International Archives of the Photogrammetry, Remote Sensing & Spatial Information Sciences 41 (2016).
+    paper: https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.net/XLI-B2/459/2016/isprs-archives-XLI-B2-459-2016.pdf
 ```
 
 For example, you can run the following command to convert "ned19_n37x75_w122x50_ca_goldengate_2010_mercator.tif" to a single big mesh, using a `max-error` parameter of 2.0 meters:
@@ -212,7 +214,7 @@ dem2tintiles options:
   --max-error arg                max error
   --output-format arg (=terrain) output tiles in terrain (quantized mesh) or
                                  obj
-  --method arg (=terra)          meshing algorithm. one of: terra, curvature
+  --method arg (=terra)          meshing algorithm. one of: terra, zemlya, curvature
 ```
 
 

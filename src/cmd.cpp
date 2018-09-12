@@ -54,7 +54,7 @@ static int subcommand_dem2tintiles(bool need_help,
         ("min-zoom", po::value<int>()->default_value(-1), "minimum zoom level to generate tiles for will guesstimate from resolution if not provided.")
         ("max-error", po::value<double>(), "max error")
         ("output-format", po::value<std::string>()->default_value("terrain"), "output tiles in terrain (quantized mesh) or obj")
-		("method", po::value<std::string>()->default_value("terra"), "meshing algorithm. one of: terra, curvature");
+		("method", po::value<std::string>()->default_value("terra"), "meshing algorithm. one of: terra, zemlya, curvature");
     // clang-format on
 
     auto parsed = po::command_line_parser(unrecognized).options(subdesc).run();
@@ -246,9 +246,9 @@ static int subcommand_dem2tin(bool need_help,
         ("output-format", po::value<std::string>()->default_value("auto"), "output file format, can be any of: auto, obj, off, terrain (quantized mesh), json/geojson")
         //("output-crs", po::value<std::string>()->default_value("none"), "coordinate reference system of the output data, can be any of none, wgs84, webmerc")
         //("normalize", "normalize X and Y coordinate of the output mesh to a range of 0..1 relative to ")
-        ("method", po::value<std::string>()->default_value("terra"), "meshing method, valid values are: terra"
+        ("method", po::value<std::string>()->default_value("terra"), "meshing method, valid values are: terra, zemlya"
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
-         ", curvature, zemlya"
+         ", curvature"
 #endif
         )
         ("max-error", po::value<double>(), "(terra) maximum geometric error")
@@ -274,11 +274,13 @@ static int subcommand_dem2tin(bool need_help,
         println(
             "  terra     - implements a delaunay based triangulation with point selection using a fast greedy insert mechnism");
         println(
-            "    see \"M. Garland and P. Heckbert. Fast Polygonal Approximation of Terrains and Height Fields. Technical Report CMU-CS-95-181\"");
+                "    reference: Garland, Michael, and Paul S. Heckbert. \"Fast polygonal approximation of terrains and height fields.\" (1995).");
         println("    paper: https://mgarland.org/papers/scape.pdf");
         println("    and http://mgarland.org/archive/cmu/scape/terra.html");
-#if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
         println("  zemlya    - hierarchical greedy insertion");
+        println("    reference: Zheng, Xianwei, et al. \"A VIRTUAL GLOBE-BASED MULTI-RESOLUTION TIN SURFACE MODELING AND VISUALIZETION METHOD.\" International Archives of the Photogrammetry, Remote Sensing & Spatial Information Sciences 41 (2016).");
+        println("    paper: https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.net/XLI-B2/459/2016/isprs-archives-XLI-B2-459-2016.pdf");
+#if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
         println("  curvature - sets points when curvature integral is larger than threshold");
 #endif
         return 0;
