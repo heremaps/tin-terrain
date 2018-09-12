@@ -742,9 +742,9 @@ static bool run_all_dem2tin_method_benchmarks_on_single_file(
 
     available_methods.push_back(std::make_unique<BenchmarkMeshingMethodRegular>());
     available_methods.push_back(std::make_unique<BenchmarkMeshingMethodTerra>());
+    available_methods.push_back(std::make_unique<BenchmarkMeshingMethodZemlya>());
 
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
-    available_methods.push_back(std::make_unique<BenchmarkMeshingMethodZemlya>());
     available_methods.push_back(std::make_unique<BenchmarkMeshingMethodCurvature>());
 #endif
 

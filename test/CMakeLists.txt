@@ -41,7 +41,7 @@ add_executable(tntn-tests
     src/triangle_indices.h    
 )
 
-get_filename_component(OTN_FIXTURES_LOCATION "fixtures" ABSOLUTE)
+get_filename_component(TNTN_FIXTURES_LOCATION "fixtures" ABSOLUTE)
 
 target_link_libraries(tntn-tests
     PRIVATE
@@ -69,7 +69,7 @@ endif()
 
 target_compile_definitions(tntn-tests
     PRIVATE
-    OTN_FIXTURES_PATH="${OTN_FIXTURES_LOCATION}"
+    TNTN_FIXTURES_PATH="${TNTN_FIXTURES_LOCATION}"
 )
 
 

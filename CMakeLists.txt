@@ -181,14 +181,15 @@ set(TNTN_SOURCE_FILES
     
     include/tntn/println.h
     src/println.cpp
+
+    include/tntn/ZemlyaMesh.h
+    src/ZemlyaMesh.cpp
 )
 
 if(TNTN_USE_ADDONS)
     list(APPEND TNTN_SOURCE_FILES
         include/tntn/Raster2Mesh.h
         src/Raster2Mesh.cpp
-        include/tntn/ZemlyaMesh.h
-        src/ZemlyaMesh.cpp
     )
 endif()
 
