@@ -117,7 +117,7 @@ To run the tests, build and run the tntn-tests target.
 The `tin-terrain` command-line tool has a few subcommands. You can run `tin-terrain --help` to see all available subcommands.
 
 ```
-root@d141d78860ad:/home# tin-terrain --help
+$ tin-terrain --help
 usage:
   tin-terrain [OPTION]... <subcommand> ...
 
@@ -153,7 +153,7 @@ You can use the `dem2tin` subcommand to convert a raster heightmap into a single
 You can see all available options by running `tin-terrain dem2tin --help`.
 
 ```
-root@d141d78860ad:/home# tin-terrain dem2tin --help
+$ tin-terrain dem2tin --help
 subcommand_dem2tin
 usage:
   tin-terrain dem2tin [OPTIONS]...
@@ -198,7 +198,7 @@ The `dem2tintiles` subcommand takes a raster heightmap as the input, and creates
 You can see all available options by running `tin-terrain dem2tintiles --help`.
 
 ```
-root@d141d78860ad:/home# tin-terrain dem2tintiles --help
+$ tin-terrain dem2tintiles --help
 usage:
   tin-terrain dem2tintiles [OPTION]...
 
