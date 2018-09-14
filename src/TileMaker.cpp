@@ -119,7 +119,7 @@ bool TileMaker::dumpTile(int tx, int ty, int zoom, const char* filename, MeshWri
     Mesh tileMesh;
     tileMesh.from_triangles(std::move(trianglesInTile));
     tileMesh.generate_decomposed();
-
+    
     return mesh_writer.write_mesh_to_file(filename, tileMesh, tileSpaceBbox);
 }
 

@@ -24,8 +24,6 @@
 #include <chrono>
 #include <string>
 
-#define TNTN_USE_ADDONS true
-
 namespace po = boost::program_options;
 
 namespace tntn {
