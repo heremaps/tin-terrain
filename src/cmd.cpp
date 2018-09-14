@@ -237,24 +237,21 @@ static int subcommand_dem2tin(bool need_help,
 {
     TNTN_LOG_INFO("subcommand_dem2tin");
     po::options_description subdesc("dem2tin options");
+    
     // clang-format off
     subdesc.add_options()
         ("input", po::value<std::string>(), "input filename")
         ("input-format",po::value<std::string>()->default_value("auto"), "input file format, can be any of: auto, asc, xyz, tiff")
-        //("input-crs", po::value<std::string>()->default_value("none"), "coordinate reference system of the input data, can be any of none, wgs84, webmerc")
         ("output", po::value<std::string>(), "output filename")
         ("output-format", po::value<std::string>()->default_value("auto"), "output file format, can be any of: auto, obj, off, terrain (quantized mesh), json/geojson")
-        //("output-crs", po::value<std::string>()->default_value("none"), "coordinate reference system of the output data, can be any of none, wgs84, webmerc")
-        //("normalize", "normalize X and Y coordinate of the output mesh to a range of 0..1 relative to ")
-        ("method", po::value<std::string>()->default_value("terra"), "meshing method, valid values are: terra, zemlya"
+        ("max-error", po::value<double>(), "(terra and zemlya) maximum geometric error")
+        ("step", po::value<double>(), "(dense) grid spacing in raster pixels")
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
-         ", curvature"
+        ("threshold", po::value<double>(), "(curvature): threshold on the maximum accumulated curvature")
+        ("method", po::value<std::string>()->default_value("terra"), "meshing method, valid values are: dense, terra, zemlya, curvature");
+#else
+        ("method", po::value<std::string>()->default_value("terra"), "meshing method, valid values are: dense, terra, zemlya");
 #endif
-        )
-        ("max-error", po::value<double>(), "(terra) maximum geometric error")
-        ("max-factor", po::value<double>(), "(simple) set point if gradient is this percentage from local maxima")
-        ("threshold", po::value<double>(), "(simple,curvature) simple: find local maxmima for gradients larger than this - curvature: threshold on curvature integral")
-    ;
     // clang-format on
 
     auto parsed = po::command_line_parser(unrecognized).options(subdesc).run();
@@ -280,10 +277,10 @@ static int subcommand_dem2tin(bool need_help,
         println("  zemlya    - hierarchical greedy insertion");
         println("    reference: Zheng, Xianwei, et al. \"A VIRTUAL GLOBE-BASED MULTI-RESOLUTION TIN SURFACE MODELING AND VISUALIZETION METHOD.\" International Archives of the Photogrammetry, Remote Sensing & Spatial Information Sciences 41 (2016).");
         println("    paper: https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.net/XLI-B2/459/2016/isprs-archives-XLI-B2-459-2016.pdf");
+        println("  dense     - generates a simple mesh grid from the raster input by placing one vertex per pixel");
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
         println("  curvature - sets points when curvature integral is larger than threshold");
 #endif
-        println("  dense     - generates a simple mesh grid from the raster input by placing one vertex per pixel");
         return 0;
     }
 
@@ -314,6 +311,8 @@ static int subcommand_dem2tin(bool need_help,
         TNTN_LOG_ERROR("Unable to load input file, aborting");
         return false;
     }
+    
+    TNTN_LOG_INFO("done");
 
     std::unique_ptr<Mesh> mesh;
 
@@ -338,13 +337,17 @@ static int subcommand_dem2tin(bool need_help,
             TNTN_LOG_INFO("performing zemlya meshing...");
             mesh = generate_tin_zemlya(std::move(raster), max_error);
         }
-        
     }
     else if(method == "dense")
     {
+        int step = 1;
+        if(local_varmap.count("step"))
+        {
+            step = (int)local_varmap["step"].as<double>();
+        }
+        
         TNTN_LOG_INFO("generating dense mesh grid ...");
-        int dense_step = 1;
-        mesh = generate_tin_dense_quadwalk(*raster, dense_step);
+        mesh = generate_tin_dense_quadwalk(*raster, step);
     }
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
     else if(method == "curvature")
@@ -404,11 +407,13 @@ static int subcommand_dem2tin(bool need_help,
         TNTN_LOG_INFO("number of vertices: {}", mesh->vertices().distance());
     }
 
+    TNTN_LOG_INFO("writing mesh... ({})",output_file);
     if(!write_mesh_to_file(output_file.c_str(), *mesh, output_file_format))
     {
         TNTN_LOG_ERROR("error writing output file");
         return -1;
     }
+    TNTN_LOG_INFO("done");
 
     return 0;
 }
