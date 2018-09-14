@@ -24,6 +24,8 @@
 #include <chrono>
 #include <string>
 
+#define TNTN_USE_ADDONS true
+
 namespace po = boost::program_options;
 
 namespace tntn {
@@ -56,8 +58,8 @@ static int subcommand_dem2tintiles(bool need_help,
         ("step", po::value<int>()->default_value(1), "grid spacing in pixels when using dense method")
         ("output-format", po::value<std::string>()->default_value("terrain"), "output tiles in terrain (quantized mesh) or obj")
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
-        ("method", po::value<std::string>()->default_value("terra"), "meshing algorithm. one of: terra, zemlya, curvature or dense");
-        ("threshold", po::value<double>(), "threshold when using curvature method")
+        ("method", po::value<std::string>()->default_value("terra"), "meshing algorithm. one of: terra, zemlya, curvature or dense")
+        ("threshold", po::value<double>(), "threshold when using curvature method");
 #else
 		("method", po::value<std::string>()->default_value("terra"), "meshing algorithm. one of: terra, zemlya or dense");
 #endif
@@ -290,6 +292,11 @@ static int subcommand_dem2tin(bool need_help,
 {
     TNTN_LOG_INFO("subcommand_dem2tin");
     po::options_description subdesc("dem2tin options");
+    
+    
+#if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
+    std::cout << "works";
+#endif
     
     // clang-format off
     subdesc.add_options()
