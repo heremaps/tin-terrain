@@ -2,6 +2,7 @@
 #include "tntn/MercatorProjection.h"
 #include "tntn/terra_meshing.h"
 #include "tntn/simple_meshing.h"
+#include "tntn/zemlya_meshing.h"
 #include "tntn/TileMaker.h"
 #include "tntn/logging.h"
 
@@ -66,7 +67,7 @@ bool create_tiles_for_zoom_level(const RasterDouble& dem,
                                  const std::vector<Partition>& partitions,
                                  int zoom,
                                  const std::string& output_basedir,
-                                 double max_error,
+                                 const double method_parameter,
                                  const std::string& meshing_method,
                                  MeshWriter& mesh_writer)
 {
@@ -106,11 +107,21 @@ bool create_tiles_for_zoom_level(const RasterDouble& dem,
 
         if(meshing_method == "terra")
         {
-            mesh = generate_tin_terra(std::move(raster_tile), max_error);
+            mesh = generate_tin_terra(std::move(raster_tile), method_parameter);
         }
+        else if(meshing_method == "zemlya")
+        {
+            mesh = generate_tin_zemlya(std::move(raster_tile),  method_parameter);
+        }
+#if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
         else if(meshing_method == "curvature")
         {
-            mesh = generate_tin_curvature(*raster_tile, max_error);
+            mesh = generate_tin_curvature(*raster_tile, method_parameter);
+        }
+#endif
+        else if(meshing_method == "dense")
+        {
+            mesh = generate_tin_dense_quadwalk(*raster_tile, (int)method_parameter);
         }
         else
         {
