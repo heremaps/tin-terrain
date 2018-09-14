@@ -2,6 +2,8 @@
 
 TIN Terrain is a command-line tool for converting heightmaps presented in GeoTIFF format into tiled optimised mesh (Triangulated Irregular Network) with different levels of details.
 
+Check out [heremaps/quantized-mesh-viewer](https://github.com/heremaps/quantized-mesh-viewer) for examples of rednering ouput in [Cesium.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/map/surface-provider.js) and [Three.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/tile/index.js)
+
 Note: This is experimental code, expect changes.
 
 
@@ -245,3 +247,10 @@ These mesh tiles can then be easily served from a webserver and be consumed by f
 Copyright (C) 2018 HERE Europe B.V.
 
 See the [LICENSE](LICENSE) file in the root of this project for license details.
+
+## Papers
+
+Some algorithms are based on ideas from:
+
+* [Garland, Michael, and Paul S. Heckbert. "Fast polygonal approximation of terrains and height fields." (1995).](https://mgarland.org/papers/scape.pdf)
+* [Zheng, Xianwei, et al. "A VIRTUAL GLOBE-BASED MULTI-RESOLUTION TIN SURFACE MODELING AND VISUALIZETION METHOD." International Archives of the Photogrammetry, Remote Sensing & Spatial Information Sciences 41 (2016).](https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.net/XLI-B2/459/2016/isprs-archives-XLI-B2-459-2016.pdf)
