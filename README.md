@@ -1,8 +1,8 @@
 # TIN Terrain
 
-TIN Terrain is a command-line tool for converting heightmaps presented in GeoTIFF format into tiled optimised mesh (Triangulated Irregular Network) with different levels of details.
+TIN Terrain is a command-line tool for converting heightmaps presented in GeoTIFF format into tiled optimized meshes (Triangulated Irregular Network) with different levels of details.
 
-Check out [heremaps/quantized-mesh-viewer](https://github.com/heremaps/quantized-mesh-viewer) for examples of rendering ouput in [Cesium.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/map/surface-provider.js) and [Three.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/tile/index.js)
+Check out [heremaps/quantized-mesh-viewer](https://github.com/heremaps/quantized-mesh-viewer) for examples of rendering output in [Cesium.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/map/surface-provider.js) and [Three.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/tile/index.js)
 
 Note: This is experimental code, expect changes.
 
@@ -59,13 +59,13 @@ If you choose to compile and run "TIN Terrain" directly on your system, please n
 * Boost (BSL-1.0) `program_options`, `filesystem`, `system` (tested with version `1.67`)
 * GDAL (MIT) `gdal`, `gdal_priv`, `cpl_conv` (tested with version `2.3`)
 
-TIN Terrain also downloads some sourcecode of 3rd party libraries during the cmake configure phase:
-* libfmt (BSD-2-Clause) https://github.com/fmtlib/fmt
-* glm (MIT) https://github.com/g-truc/glm
-* Catch2 (BSL-1.0) https://github.com/catchorg/Catch2
+TIN Terrain also downloads some source code of 3rd party libraries during the CMake configure phase:
+* [libfmt](https://github.com/fmtlib/fmt) (BSD-2-Clause)
+* [glm](https://github.com/g-truc/glm) (MIT)
+* [Catch2](https://github.com/catchorg/Catch2) (BSL-1.0)
 
-You can disable this behaviour by passing the `-DTNTN_DOWNLOAD_DEPS=OFF` option to cmake when generating the project/makefiles.
-If you do so, you have to download dependencies yourself and also pass the `TNTN_LIBGLM_SOURCE_DIR` and `TNTN_LIBFMT_SOURCE_DIR` variables to cmake
+You can disable this behaviour by passing the `-DTNTN_DOWNLOAD_DEPS=OFF` option to CMake when generating the project/makefiles.
+If you do so, you have to download dependencies yourself and also pass the `TNTN_LIBGLM_SOURCE_DIR` and `TNTN_LIBFMT_SOURCE_DIR` variables to CMake
 as well as `TNTN_CATCH2_SOURCE_DIR` if you want to run the tests.
 
 See [download-deps.cmake](download-deps.cmake) for detailed version info.
