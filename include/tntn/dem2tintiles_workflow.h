@@ -22,7 +22,7 @@ bool create_tiles_for_zoom_level(const RasterDouble& dem,
                                  const std::vector<Partition>& partitions,
                                  int zoom,
                                  const std::string& output_basedir,
-                                 double max_error,
+                                 const double method_parameter,
                                  const std::string& meshing_method,
                                  MeshWriter& mesh_writer);
 

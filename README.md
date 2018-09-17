@@ -166,13 +166,10 @@ dem2tin options:
   --output arg                output filename
   --output-format arg (=auto) output file format, can be any of: auto, obj,
                               off, terrain (quantized mesh), json/geojson
-  --method arg (=terra)       meshing method, valid values are: terra, zemlya
-  --max-error arg             (terra) maximum geometric error
-  --max-factor arg            (simple) set point if gradient is this percentage
-                              from local maxima
-  --threshold arg             (simple,curvature) simple: find local maxmima for
-                              gradients larger than this - curvature: threshold
-                              on curvature integral
+  --method arg (=terra)       meshing method, valid values are: terra, zemlya and dense
+  --max-error arg             (terra & zemlya) maximum geometric error
+  --step arg (=1)		      (dense) grid spacing in pixels
+
 
 methods:
   terra     - implements a delaunay based triangulation with point selection using a fast greedy insert mechnism
@@ -182,6 +179,7 @@ methods:
   zemlya    - hierarchical greedy insertion
     reference: Zheng, Xianwei, et al. "A VIRTUAL GLOBE-BASED MULTI-RESOLUTION TIN SURFACE MODELING AND VISUALIZETION METHOD." International Archives of the Photogrammetry, Remote Sensing & Spatial Information Sciences 41 (2016).
     paper: https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.net/XLI-B2/459/2016/isprs-archives-XLI-B2-459-2016.pdf
+  dense     - generates a simple mesh grid from the raster input by placing one vertex per pixel
 ```
 
 For example, you can run the following command to convert "ned19_n37x75_w122x50_ca_goldengate_2010_mercator.tif" to a single big mesh, using a `max-error` parameter of 2.0 meters:
@@ -213,10 +211,11 @@ dem2tintiles options:
                                  guesstimate from resolution if not provided.
   --min-zoom arg (=-1)           minimum zoom level to generate tiles for will
                                  guesstimate from resolution if not provided.
-  --max-error arg                max error
+  --max-error arg                (terra or zemlya) max error when using
+  --step arg (=1)            	 (dense) grid spacing in pixels
   --output-format arg (=terrain) output tiles in terrain (quantized mesh) or
                                  obj
-  --method arg (=terra)          meshing algorithm. one of: terra, zemlya, curvature
+  --method arg (=terra)          meshing algorithm. one of: terra, zemlya or dense
 ```
 
 
