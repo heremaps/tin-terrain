@@ -95,6 +95,33 @@ For a deeper understanding of the Quad-Edge data structure, please read this han
 
 <http://graphics.stanford.edu/courses/cs348a-17-winter/ReaderNotes/handout31.pdf>
 
+### Incremental Delaunay
+
+The incremental Delaunay triangulation is implemented in "DelaunayMesh.h/cpp". The key method in this class is the `DelaunayMesh::insert`, which inserts a new vertex into the mesh. Inserting a new vertex requires creating spokes from the new vertex to the vertices of the enclosing triangle, as well as updating the affected edges so that they still satisfy Delaunay requirements.
+
+```c
+void DelaunayMesh::insert(const Point2D x, dt_ptr tri)
+{
+    qe_ptr e = tri ? locate(x, tri->getAnchor()) : locate(x);
+
+    if((x == e->Org()) || (x == e->Dest()))
+    {
+        // point is already in the mesh, so update the triangles x is in
+        optimize(x, e);
+    }
+    else
+    {
+        qe_ptr start_spoke = spoke(x, e);
+        if(start_spoke)
+        {
+            optimize(x, start_spoke->Sym());
+        }
+    }
+}
+```
+
+Every time a triangle is updated during triangulation, we scan the triangle to update the candidate point with the greatest error, as discussed in the next section.
+
 ### Greedy Insertion
 
 The greedy insertion algorithm is implemented in "TerraMesh.h/cpp".
