@@ -40,7 +40,7 @@ docker run -v [local data directory]:/data:cached --name tin-terrain --rm -i -t 
 where `[local data directory]` is the folder that contains your DEM files and will receive the output files. This will be mapped to `/data` in the Docker instance, so you should use:
 
 ```
-docker run -v [local data directory]:/data:cached --name tin-terrain --rm -i -t tin-terrain tin-terrain dem2tin --input /data/... -output /data/... 
+docker run -v [local data directory]:/data:cached --name tin-terrain --rm -i -t tin-terrain tin-terrain dem2tin --input /data/... --output /data/... 
 ```
 
 Alternatively, use 
