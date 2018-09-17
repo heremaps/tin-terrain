@@ -240,6 +240,23 @@ The folder structure follows the map tile convention: `Z/X/Y.terrain`.
 
 These mesh tiles can then be easily served from a webserver and be consumed by frontend applications for purposes such as terrain visualization.
 
+### Sample Datasets
+
+When you enable the `TNTN_TEST` and `TNTN_DOWNLOAD_DEPS` options in the CMake configuration, a few sample datasets will be downloaded into the `${CMAKE_SOURCE_DIR}/3rdparty/` folder.
+
+For example, you will find the crater lake dataset in the `${CMAKE_SOURCE_DIR}/3rdparty/craterlake` folder. This dataset is created and maintained by the U.S. Geological Survey (USGS) and can be downloaded from <http://oe.oregonexplorer.info/craterlake/>.
+
+To generate a mesh from this dataset, you need to reproject it to the Web Mercator projection first, using the `gdalwarp` command-line tool which comes with your GDAL installation:
+
+```sh
+gdalwarp -t_srs EPSG:3857 dems_10m.dem dems_10m.tif
+```
+
+Then you can run `tin-terrain` on this reprojected GeoTIFF file to create a mesh:
+
+```sh
+./tin-terrain dem2tin --input dems_10m.tif --output terrain.obj --max-error 2.0 --method terra
+```
 
 ## License
 
