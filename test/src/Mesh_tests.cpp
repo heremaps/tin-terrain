@@ -7,6 +7,89 @@
 namespace tntn {
 namespace unittests {
 
+TEST_CASE("test detector for holes", "[tntn]")
+{
+    std::vector<Vertex> vertices;
+    std::vector<Face> faces;
+    
+    vertices.push_back({0.0, 0.0, 0.0}); // 0
+    vertices.push_back({1.0, 0.0, 0.0}); // 1
+    vertices.push_back({1.0, 1.0, 0.0}); // 2
+    vertices.push_back({0.0, 1.0, 0.0}); // 3
+    vertices.push_back({0.5, 0.5, 0.0}); // 4
+    
+    faces.push_back({{0, 4, 3}}); // t0
+    faces.push_back({{1, 2, 4}}); // t1
+    faces.push_back({{3, 4, 2}}); // t2
+    
+    Mesh has_hole;
+    has_hole.from_decomposed(std::move(vertices), std::move(faces));
+    has_hole.generate_triangles();
+    
+    CHECK(has_hole.poly_count() == 3);
+    CHECK(has_hole.check_for_holes_in_square_mesh() == true);
+    
+    vertices.clear();
+    faces.clear();
+    
+    vertices.push_back({0.0, 0.0, 0.0}); // 0
+    vertices.push_back({1.0, 0.0, 0.0}); // 1
+    vertices.push_back({1.0, 1.0, 0.0}); // 2
+    vertices.push_back({0.0, 1.0, 0.0}); // 3
+    vertices.push_back({0.5, 0.5, 0.0}); // 4
+    
+    faces.push_back({{0, 4, 3}}); // t0
+    faces.push_back({{1, 2, 4}}); // t1
+    faces.push_back({{3, 4, 2}}); // t2
+    faces.push_back({{0, 4, 1}}); // t3
+    
+    Mesh has_no_hole;
+    has_no_hole.from_decomposed(std::move(vertices), std::move(faces));
+    has_no_hole.generate_triangles();
+    
+    CHECK(has_no_hole.poly_count() == 4);
+    CHECK(has_no_hole.check_for_holes_in_square_mesh() == false);
+}
+    
+TEST_CASE("test detector for square mesh", "[tntn]")
+{
+
+    std::vector<Vertex> vertices;
+    std::vector<Face> faces;
+    
+    vertices.push_back({0.0, 0.0, 0.0}); // 0
+    vertices.push_back({1.0, 0.0, 0.0}); // 1
+    vertices.push_back({1.0, 1.0, 0.0}); // 2
+    
+    faces.push_back({{0, 1, 2}}); // t0
+    
+    Mesh non_square;
+    non_square.from_decomposed(std::move(vertices), std::move(faces));
+    non_square.generate_triangles();
+    
+    CHECK(non_square.poly_count() == 1);
+    CHECK(non_square.is_square() == false);
+    
+    vertices.clear();
+    faces.clear();
+    
+    vertices.push_back({0.0, 0.0, 0.0}); // 0
+    vertices.push_back({1.0, 1.0, 0.0}); // 1
+    vertices.push_back({0.0, 1.0, 0.0}); // 2
+    vertices.push_back({1.0, 0.0, 0.0}); // 3
+    
+    faces.push_back({{0, 3, 1}}); // t0
+    faces.push_back({{0, 1, 2}}); // t1
+    
+    Mesh square;
+    square.from_decomposed(std::move(vertices), std::move(faces));
+    square.generate_triangles();
+    
+    CHECK(square.poly_count() == 2);
+    CHECK(square.is_square() == true);
+    
+}
+    
 TEST_CASE("Mesh from triangles", "[tntn]")
 {
     Mesh m;

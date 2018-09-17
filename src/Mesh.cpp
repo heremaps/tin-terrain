@@ -437,6 +437,141 @@ static bool face_edge_crosses_other_edge(const size_t fi,
     return false;
 }
 
+/**
+ checks if mesh convex hull is square
+ and aligned with the bounding box extremes
+ 
+ @return true if mesh is square, false otherwise
+ */
+bool Mesh::is_square() const
+{
+    BBox3D bb3d;
+    get_bbox(bb3d);
+    
+    
+    double dx = bb3d.max.x - bb3d.min.x;
+    double dy = bb3d.max.y - bb3d.min.y;
+    
+    TNTN_ASSERT(dx > 0);
+    TNTN_ASSERT(dy > 0);
+    
+    double eps = ( dx + dy ) / 20000.0;
+    
+    // double check assumption that mesh is square and aligned with bb
+    // see if we have vertex points at all 4 corners of bb
+    
+    bool corners_exist[4];
+    for(int i=0; i < 4; i++)
+    {
+        corners_exist[i] = false;
+    }
+    
+    for(const Vertex &v : m_vertices)
+    {
+        if(std::abs(v.x - bb3d.min.x) < eps && std::abs(v.y - bb3d.min.y) < eps)
+        {
+            corners_exist[0] = true;
+        }
+        
+        if(std::abs(v.x - bb3d.max.x) < eps && std::abs(v.y - bb3d.max.y) < eps)
+        {
+            corners_exist[1] = true;
+        }
+        
+        if(std::abs(v.x - bb3d.max.x) < eps && std::abs(v.y - bb3d.min.y) < eps)
+        {
+            corners_exist[2] = true;
+        }
+        
+        if(std::abs(v.x - bb3d.min.x) < eps && std::abs(v.y - bb3d.max.y) < eps)
+        {
+            corners_exist[3] = true;
+        }
+        
+        int true_count=0;
+        for(int i=0; i < 4; i++)
+        {
+            if(corners_exist[i])
+            {
+                true_count++;
+            }
+        }
+        
+        if(true_count == 4)
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}
+    
+/**
+ checks if mesh has holes in it
+ will only work for meshes where the convex hull is square
+ and aligned with the bounding box extremes
+ 
+ @return true if mesh has hole, false otherwise
+ */
+bool Mesh::check_for_holes_in_square_mesh() const
+{
+
+    // check for holes in mesh
+    // method:
+    // 1.find area of mesh
+    // 2. sum area of all triangles
+    // 3. comapre 1 & 2 to see if they are equal
+    // assumptions: mesh area (convex hull) is square and can be simply computed from bb / x y min max points
+    
+    // get bounding box
+    BBox3D bb3d;
+    this->get_bbox(bb3d);
+
+    double dx = bb3d.max.x - bb3d.min.x;
+    double dy = bb3d.max.y - bb3d.min.y;
+    
+    TNTN_ASSERT(dx > 0);
+    TNTN_ASSERT(dy > 0);
+    
+    double eps = ( dx + dy ) / 20000.0;
+   
+    if(is_square())
+    {
+        TNTN_LOG_DEBUG("mesh is square - checking for holes");
+        
+        double area_bb      = dx*dy;
+        double area_tri_sum = 0;
+        
+        for(const Face &f : m_faces)
+        {
+            const Vertex& v1 =  m_vertices[f[0]];
+            const Vertex& v2 =  m_vertices[f[1]];
+            const Vertex& v3 =  m_vertices[f[2]];
+            
+            //area of triangle
+            double area_tri = 0.5 * std::abs( (v2.x-v1.x) * (v3.y-v1.y) - (v3.x-v1.x) * (v2.y-v1.y) );
+            
+            area_tri_sum += area_tri;
+        }
+        
+        if(std::abs(area_tri_sum - area_bb) > eps)
+        {
+            TNTN_LOG_DEBUG("mesh has holes. area of bounding box {} area of all triangles combined {}",area_bb,area_tri_sum);
+            return true;
+        }
+        else
+        {
+            TNTN_LOG_DEBUG("mesh has no holes");
+            return false;
+        }
+    }
+    else
+    {
+        TNTN_LOG_DEBUG("mesh is not square - can not check for holes");
+        return false;
+    }
+}
+
 bool Mesh::check_tin_properties() const
 {
     TNTN_LOG_DEBUG("checking mesh consistency / TIN properties...");
@@ -560,6 +695,14 @@ bool Mesh::check_tin_properties() const
         }
     }
 #endif
+    
+    // IF the mesh convex hull is square
+    // this function will detect holes
+    if(check_for_holes_in_square_mesh())
+    {
+        return false;
+    }
+    
     TNTN_LOG_DEBUG("mesh is a regular/propper TIN");
     return true;
 }
