@@ -219,8 +219,8 @@ RasterDouble Mesh2Raster::rasterise(
         }
         tcount++;
     }
-
-#if true
+    
+#if TNTN_DEBUG
     // count empty pixels
     // i.e. where rendere hasn't been able to add height
     int countempty = 0;
