@@ -29,9 +29,11 @@ Below we describe in detail how the "Terra" meshing algorithm is implemented in 
 
 The Quad-Edge data structure is used to efficiently describe and walk the mesh. This data structure is designed to find the vertices/edges/faces immediately adjacent to a given vertex/edge/face in constant time.
 
-In the TIN Terrain tool, the quad-edge data structure is implemented in "QuadEdge.h/cpp".
+In the TIN Terrain tool, the quad-edge data structure is implemented in "QuadEdge.h/cpp" and "DelaunayTriangle.h/cpp".
 
 ![7AD175B29AB688F685EBE45F6D46FAE3.jpg](https://raw.githubusercontent.com/heremaps/tin-terrain/algorithm-docs.ylian/docs/resources/7AD175B29AB688F685EBE45F6D46FAE3.jpg)
+
+(Illustration from <http://www.cs.cmu.edu/afs/andrew/scs/cs/15-463/2001/pub/src/a2/quadedge.html>)
 
 Each QuadEdge object internally stores pointers to three more edges: its inverse (`e->Sym`), dual edge pointing to the left (`e->Rot`), and dual edge pointing to the right (`e->InvRot`), as shown in the illustration above.
 
@@ -58,6 +60,8 @@ class QuadEdge
 ```
 
 ![4D859D9DDCB9690EFB04E6CCC75FABDC.jpg](https://raw.githubusercontent.com/heremaps/tin-terrain/algorithm-docs.ylian/docs/resources/4D859D9DDCB9690EFB04E6CCC75FABDC.jpg)
+
+(Illustration from <http://www.cs.cmu.edu/afs/andrew/scs/cs/15-463/2001/pub/src/a2/quadedge.html>)
 
 With these pointers, a QuadEdge object can quickly find the adjacent vertices/edges/faces. For example, `e->Rot()->Onext()->Rot()` gives the previous edge around the same origin.
 
