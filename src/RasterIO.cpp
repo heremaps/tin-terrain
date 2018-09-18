@@ -2,6 +2,7 @@
 #include "tntn/RasterIO.h"
 #include "fmt/format.h"
 #include "tntn/logging.h"
+#include "tntn/println.h"
 #include "tntn/util.h"
 #include "tntn/raster_tools.h"
 
@@ -353,6 +354,10 @@ bool load_raster_file(const std::string& file_name,
 
     if(validate_projection && !is_valid_projection(dataset.get()))
     {
+        println("input raster file must be in EPSG:3857 (Web Mercator) format");
+        println("you can reproject raster terrain using GDAL");
+        println("as follows: 'gdalwarp -t_srs EPSG:3857 input.tif output.tif'");
+        
         return false;
     }
 
