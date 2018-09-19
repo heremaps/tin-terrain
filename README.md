@@ -6,6 +6,7 @@ Check out [heremaps/quantized-mesh-viewer](https://github.com/heremaps/quantized
 
 Note: This is experimental code, expect changes.
 
+![dem2tin GeoTIFF to mesh on USGS craterlake DEM](docs/resources/dem2tin.jpg)
 
 ## Features
 
