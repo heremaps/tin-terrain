@@ -249,7 +249,7 @@ For example, you will find the crater lake dataset in the `${CMAKE_SOURCE_DIR}/3
 To generate a mesh from this dataset, you need to reproject it to the Web Mercator projection first, using the `gdalwarp` command-line tool which comes with your GDAL installation:
 
 ```sh
-gdalwarp -t_srs EPSG:3857 dems_10m.dem dems_10m.tif
+gdalwarp -t_srs EPSG:3857 -r cubic -of GTiff -ot Float32 dems_10m.dem dems_10m.tif
 ```
 
 Then you can run `tin-terrain` on this reprojected GeoTIFF file to create a mesh:
