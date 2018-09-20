@@ -40,13 +40,13 @@ int h = m_raster->get_height();
 m_sample.allocate(w, h);
 ```
 
-We also determine the max zoom level, which is the level where the original raster lies. Since we downsample every four pixels into one pixel as we move down a zoom level, the max level can be calculated by `log2(max(width, height)`.
+We also determine the max zoom level, which is the level where the original raster lies. Since we downsample every four pixels into one pixel as we move up a zoom level, the max level can be calculated by `log2(max(width, height))`.
 
 ```c
 m_max_level = static_cast<int>(ceil(log2(w > h ? w : h)));
 ```
 
-Then we calculate the average values by repeatedly downsampling the original raster points. At zoom level `m_max_level - 1`, we average over the values from the original raster, which are stored in `m_raster`. As we go down one more level, we average over the values from the previous level `m_max_level - 1`, which are stored in `m_sample`. We continue this downsampling process until we finish level 1.
+Then we calculate the average values by repeatedly downsampling the original raster points. At zoom level `m_max_level - 1`, we average over the values from the original raster, which are stored in `m_raster`. As we go up one more level, we average over the values from the previous level `m_max_level - 1`, which are stored in `m_sample`. We continue this downsampling process until we reach level 1.
 
 Note that we have to take special caution when dealing with missing values. We devised a special averaging function which essentially ignores missing values from input points, and returns the average value of only non-missing input points. If all input points to the averaging function are missing, the averaging function returns `NAN`.
 
@@ -100,7 +100,7 @@ for(int level = m_max_level - 1; level >= 1; level--)
 }
 ```
 
-We also need to take care of points lying outside of the raster bounds. Those out-of-bounds values are simply treated as `NAN` in the averaging process.
+We also need to take care of points lying outside of the original raster's bounds. Those out-of-bounds values are simply treated as `NAN` in the averaging process.
 
 Then we start with zoom level 1, and use an initial configuration of two triangles formed by the four corner points of the original raster. This is the same as in Terra.
 
@@ -131,7 +131,7 @@ There are two crucial steps we perform at each zoom level:
 1. Figure out which points we may insert at this zoom level
 2. Insert the points using the greedy insertion algorithm (same as in Terra)
 
-Which points should we insert at a particular zoom level? We need to insert average points in `m_sample` for this zoom level, but we also need to update points from previous levels by shrinking their commanding areas. This is crucial because average values from lower zoom levels represent values from bigger areas, but all points we insert at a zoom level must have the same size of commanding areas, or put another way, every downsampled pixel should have the same resolution at a particular zoom level. These updated points from previous levels are also added to `m_insert` so they also participate in the greedy insertion process.
+Which points should we insert at a particular zoom level? We need to insert average points in `m_sample` for this zoom level, but we also need to update points from previous levels by shrinking their commanding areas. This is crucial because average values from lower zoom levels represent values from bigger areas, but all points we insert at a zoom level must have the same size of commanding areas, or put another way, every downsampled pixel should have the same resolution at a particular zoom level. These updated points from previous levels are also added to `m_insert` so they also participate in the greedy insertion process. Note that unlike Terra, Zemlya *does* update points that are already inserted in previous zoom levels, and updating inserted points triggers retriangulation of edges around that point.
 
 This is how we update the points from previous levels:
 
