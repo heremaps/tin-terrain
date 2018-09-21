@@ -357,7 +357,7 @@ bool load_raster_file(const std::string& file_name,
         println("input raster file must be in EPSG:3857 (Web Mercator) format");
         println("you can reproject raster terrain using GDAL");
         println("as follows: 'gdalwarp -t_srs EPSG:3857 input.tif output.tif'");
-        
+
         return false;
     }
 
