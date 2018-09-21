@@ -93,6 +93,23 @@ The resulting binaries will be in the Debug/Release subdirectory.
 
 To run the tests, build and run the tntn-tests target.
 
+#### Possible linking issues with GDAL
+
+If another version of GDAL is present on your machine, the FindGDAL.cmake provided with cmake might not be able
+to properly detect the newest version of GDAL you installed through homebrew (or any other prefered method).
+
+Whether this is the case, can be easily detected, if the linking step in the compilation errors on linking GDAL.
+
+Therefore you might need to guide cmake to the right location of the GDAL:
+
+```
+cmake -GXcode -DGDAL_LIBRARY=PATH/TO/GDAL/LIB path/to/sourcecode/
+```
+e.g
+```
+cmake -GXcode -DGDAL_LIBRARY=/usr/local/Cellar/gdal/2.3.1_2/lib/libgdal.dylib path/to/sourcecode/
+```
+
 
 ### Building on Linux
 
