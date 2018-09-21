@@ -265,11 +265,11 @@ static bool get_transformation_matrix(GDALDataset* dataset, TransformationMatrix
         return false;
     }
 
-    if(abs(gt.scale_x) != abs(gt.scale_y))
+    if(fabs(gt.scale_x) != fabs(gt.scale_y))
     {
         TNTN_LOG_ERROR("Can not process rasters with non square pixels ({}x{})",
-                       abs(gt.scale_x),
-                       abs(gt.scale_y));
+                       fabs(gt.scale_x),
+                       fabs(gt.scale_y));
         return false;
     }
 
@@ -381,7 +381,7 @@ bool load_raster_file(const std::string& file_name,
     int raster_width = raster_band->GetXSize();
     int raster_height = raster_band->GetYSize();
 
-    target_raster.set_cell_size(abs(gt.scale_x));
+    target_raster.set_cell_size(fabs(gt.scale_x));
     target_raster.allocate(raster_width, raster_height);
     target_raster.set_no_data_value(raster_band->GetNoDataValue());
 

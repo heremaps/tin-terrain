@@ -137,7 +137,7 @@ double SurfacePoints::find_non_zero_min_diff(const std::vector<double>& values,
 
         TNTN_LOG_TRACE("v: {:6}", v);
 
-        double d = abs(last - v);
+        double d = fabs(last - v);
         if(d > 0)
         {
             if(min_diff == 0)
