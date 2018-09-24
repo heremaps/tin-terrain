@@ -58,7 +58,7 @@ class Mesh
     void get_bbox(BBox3D& bbox) const;
 
     bool check_tin_properties() const;
-    
+
     bool is_square() const;
     bool check_for_holes_in_square_mesh() const;
 

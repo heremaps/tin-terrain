@@ -46,7 +46,7 @@ int RasterOverviews::guess_min_zoom_level(int max_zoom_level)
 
 void RasterOverviews::compute_zoom_levels()
 {
-    m_estimated_max_zoom = guess_max_zoom_level(abs(m_base_raster->get_cell_size()));
+    m_estimated_max_zoom = guess_max_zoom_level(fabs(m_base_raster->get_cell_size()));
     m_estimated_min_zoom = guess_min_zoom_level(m_estimated_max_zoom);
 
     if(m_min_zoom <= m_estimated_min_zoom)

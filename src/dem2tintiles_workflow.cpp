@@ -111,7 +111,7 @@ bool create_tiles_for_zoom_level(const RasterDouble& dem,
         }
         else if(meshing_method == "zemlya")
         {
-            mesh = generate_tin_zemlya(std::move(raster_tile),  method_parameter);
+            mesh = generate_tin_zemlya(std::move(raster_tile), method_parameter);
         }
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
         else if(meshing_method == "curvature")
