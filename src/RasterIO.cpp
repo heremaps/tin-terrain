@@ -46,8 +46,6 @@ RasterDouble load_raster_from_asc(const std::string& filename)
 
     int numPoints = 0;
 
-    bool readingData = false;
-
     std::vector<std::string> tokens;
     for(std::string line; getline(input, line);)
     {
@@ -82,8 +80,6 @@ RasterDouble load_raster_from_asc(const std::string& filename)
             }
             else
             {
-                readingData = true;
-
 #if true
 
                 // read data
@@ -219,7 +215,6 @@ bool write_raster_to_asc(FileLike& file, const RasterDouble& raster)
     }
 
     if(!file.write(write_position, line_buffer.data(), line_buffer.size())) return false;
-    write_position += line_buffer.size();
     line_buffer.resize(0);
 
     TNTN_LOG_INFO("done");
