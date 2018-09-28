@@ -147,8 +147,6 @@ static int subcommand_dem2tintiles(bool need_help,
         return false;
     }
 
-    double method_parameter = -1;
-
     if("zemlya" == meshing_method || "terra" == meshing_method)
     {
         max_error = input_raster->get_cell_size();
@@ -162,18 +160,6 @@ static int subcommand_dem2tintiles(bool need_help,
         {
             throw po::error("max-error must be positive");
         }
-
-        method_parameter = max_error;
-    }
-    else if("dense" == meshing_method)
-    {
-        int step = 1;
-        if(local_varmap.count("step"))
-        {
-            step = local_varmap["step"].as<int>();
-        }
-
-        method_parameter = step;
     }
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
     else if("curvature")
@@ -183,8 +169,6 @@ static int subcommand_dem2tintiles(bool need_help,
         {
             threshold = local_varmap["threshold"].as<double>();
         }
-
-        method_parameter = threshold;
     }
 #endif
     else

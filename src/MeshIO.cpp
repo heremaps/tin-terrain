@@ -49,7 +49,7 @@ std::unique_ptr<Mesh> load_mesh_from_obj(const char* filename)
     std::vector<Vertex> vertices;
     std::vector<Face> faces;
 
-    char t;
+    char t = 0;
     double x, y, z;
     while(f >> t >> x >> y >> z)
     {

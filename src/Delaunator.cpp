@@ -158,9 +158,9 @@ bool Delaunator::triangulate(const vector<double>& coords)
     const double cx = (min_x + max_x) / 2;
     const double cy = (min_y + max_y) / 2;
     double min_dist = max_double;
-    uint64_t i0;
-    uint64_t i1;
-    uint64_t i2;
+    uint64_t i0 = 0;
+    uint64_t i1 = 0;
+    uint64_t i2 = 0;
 
     // pick a seed point64_t close to the centroid
     for(uint64_t i = 0; i < n; i++)

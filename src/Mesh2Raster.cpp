@@ -158,7 +158,6 @@ RasterDouble Mesh2Raster::rasterise(
     }
 
     if(original_width == -1) original_width = out_width;
-    if(original_height == -1) original_height = out_width;
 
     double cellSize_original = mesh_w / (double)(original_width - 1);
     double cellSize = (mesh_w + cellSize_original) / (double)(out_width);

@@ -225,8 +225,8 @@ void raster_tools::find_minmax(const RasterDouble& raster, double& min_val, doub
 	*/
 BBox3D raster_tools::get_bounding_box3d(const RasterDouble& raster)
 {
-    double min_height;
-    double max_height;
+    double min_height = 0.0;
+    double max_height = 0.0;
 
     auto bbox2d = raster.get_bounding_box();
 
