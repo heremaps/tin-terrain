@@ -25,7 +25,7 @@ RasterOverviews::RasterOverviews(UniqueRasterPointer input_raster, int min_zoom,
 int RasterOverviews::guess_max_zoom_level(double resolution)
 {
     // Pixels per meter on equator
-    const double ppm = 156543.04;
+    const double ppm = 6378137.0*2*M_PI/MINIMAL_RASTER_SIZE;  //156543.04*2;
     return static_cast<int>(round(log2(ppm / resolution)));
 }
 
