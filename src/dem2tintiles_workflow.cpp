@@ -73,8 +73,6 @@ bool create_tiles_for_zoom_level(const RasterDouble& dem,
 {
     for(const auto& part : partitions)
     {
-        // if(number_of_points == 0) continue;
-
         const auto bbox = part.bbox;
         TNTN_LOG_DEBUG("current tile bbox (world coordinates) [({},{}),({},{})]",
                        bbox.min.x,
