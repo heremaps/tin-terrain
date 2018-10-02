@@ -199,7 +199,10 @@ class File::FileImpl
 
 File::File() : m_impl(std::make_unique<FileImpl>()) {}
 
-File::~File() = default;
+File::~File()
+{
+	m_impl->close();
+}
 
 bool File::open(const char* filename, OpenMode open_mode)
 {
