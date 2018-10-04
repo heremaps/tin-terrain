@@ -2,11 +2,28 @@ language: generic
 os: linux
 matrix: 
   include: 
-    name: docker
-    services: 
-      - docker
-    script: 
-      - ./build-docker.sh
+    - name: docker
+      services: 
+        - docker
+      script: 
+        - ./build-docker.sh
+    - name: clang
+      env: CXX=clang++
+      addons:
+        apt:
+          sources: [ 'ubuntu-toolchain-r-test' ]
+          packages: 
+            - 'libstdc++6'
+            - 'libstdc++-5-dev'
+            - 'gdal-bin'
+            - 'libgdal-dev'
+            - 'build-essential'
+            - 'cmake'
+            - 'libboost-program-options-dev'
+            - 'libboost-filesystem-dev'
+          script: 
+            - mkdir -p ./build && cd ./build && cmake ../ -DCMAKE_BUILD_TYPE=Release && VERBOSE=1 cmake --build .
+
 # matrix:
 #   include:
 #     # clang-tidy/format specific job
