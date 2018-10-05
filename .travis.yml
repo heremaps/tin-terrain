@@ -22,6 +22,8 @@ matrix:
             - 'cmake'
             - 'libboost-program-options-dev'
             - 'libboost-filesystem-dev'
+      install: 
+        - dpkg -l | grep -i gdal
       script: 
         - mkdir -p ./build && cd ./build && cmake ../ -DCMAKE_BUILD_TYPE=Release && VERBOSE=1 cmake --build .
 
