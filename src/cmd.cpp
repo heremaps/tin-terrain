@@ -208,7 +208,6 @@ static int subcommand_dem2tintiles(bool need_help,
 
         if(partitions.empty())
         {
-            TNTN_LOG_ERROR("zero partitions in zoom level, skipping");
             continue;
         }
 
