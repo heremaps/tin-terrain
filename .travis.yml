@@ -15,7 +15,7 @@ matrix:
           packages: 
             - 'libstdc++6'
             - 'libstdc++-5-dev'
-            - 'libgdal-dev'
+            - 'libgdal-dev=2.3'
             - 'build-essential'
             - 'cmake'
             - 'libboost-program-options-dev'
