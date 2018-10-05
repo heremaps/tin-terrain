@@ -11,11 +11,13 @@ matrix:
       env: CXX=clang++
       addons:
         apt:
-          sources: [ 'ubuntu-toolchain-r-test' ]
+          sources: 
+            - 'ubuntu-toolchain-r-test'
+            - 'ppa:ubuntugis/ubuntugis-unstable'
           packages: 
             - 'libstdc++6'
             - 'libstdc++-5-dev'
-            - 'libgdal-dev=2.3'
+            - 'libgdal-dev'
             - 'build-essential'
             - 'cmake'
             - 'libboost-program-options-dev'
