@@ -516,13 +516,15 @@ class Raster
   private:
     void alloc()
     {
-        m_data.reset(new T[m_width * m_height], [](T* d) { delete[] d; });
+        size_t width = m_width;
+        size_t height = m_height;
+        m_data.reset(new T[width * height], [](T* d) { delete[] d; });
     }
 
   private:
     // raster width and height
-    int m_width = 0;
-    int m_height = 0;
+    uint m_width = 0;
+    uint m_height = 0;
 
     // tile position in world coordinates
     double m_xpos = 0;
