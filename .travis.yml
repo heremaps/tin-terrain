@@ -7,6 +7,14 @@ matrix:
         - docker
       script: 
         - make build-docker
+    - name: clang-format
+      addons:
+        apt:
+          packages: 
+            - 'clang-format'
+      script: 
+        - make clang-format
+
 
 # matrix:
 #   include:
