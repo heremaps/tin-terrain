@@ -10,11 +10,11 @@ matrix:
     - name: clang-format
       install:
         - apt-cache search clang-format
-      # addons:
-      #   apt:
-      #     sources: [ 'ubuntu-toolchain-r-test' ]
-      #     packages: 
-      #       - 'clang-format'
+      addons:
+        apt:
+          sources: [ 'llvm-toolchain-trusty-7' ]
+          packages: 
+            - 'clang-format-8'
       script: 
         - make clang-format
 
