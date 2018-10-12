@@ -8,6 +8,7 @@ matrix:
       script: 
         - make build-docker
     - name: clang-format
+      env: CLANG_FORMAT_BIN=clang-format-8
       install:
         - apt-cache search clang-format
       addons:

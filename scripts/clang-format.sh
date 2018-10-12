@@ -1,7 +1,8 @@
 #!/bin/bash
 
-git ls-files | grep -Ee "\.(h|.pp)$" \
- | xargs -I{} clang-format -i -style=file {}
+git ls-files \
+ | grep -Ee "\.(h|.pp)$" \
+ | xargs -I{} $CLANG_FORMAT_BIN -i -style=file {}
 
 dirty=$(git ls-files --modified | grep -Ee "\.(h|.pp)$")
 
