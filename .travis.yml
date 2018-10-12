@@ -10,6 +10,7 @@ matrix:
     - name: clang-format
       addons:
         apt:
+          sources: [ 'ubuntu-toolchain-r-test' ]
           packages: 
             - 'clang-format'
       script: 
