@@ -2,30 +2,11 @@ language: generic
 os: linux
 matrix: 
   include: 
-    - name: docker
+    - name: build-docker
       services: 
         - docker
       script: 
-        - ./build-docker.sh
-    - name: clang
-      env: CXX=clang++
-      addons:
-        apt:
-          sources: 
-            - 'ubuntu-toolchain-r-test'
-            - 'ppa:ubuntugis/ubuntugis-unstable'
-          packages: 
-            - 'libstdc++6'
-            - 'libstdc++-5-dev'
-            - 'libgdal-dev'
-            - 'build-essential'
-            - 'cmake'
-            - 'libboost-program-options-dev'
-            - 'libboost-filesystem-dev'
-      install: 
-        - dpkg -l | grep -i gdal
-      script: 
-        - mkdir -p ./build && cd ./build && cmake ../ -DCMAKE_BUILD_TYPE=Release && VERBOSE=1 cmake --build .
+        - make build-docker
 
 # matrix:
 #   include:
