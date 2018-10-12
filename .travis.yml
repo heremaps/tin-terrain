@@ -12,9 +12,11 @@ matrix:
         - apt-cache search clang-format
       addons:
         apt:
-          sources: [ 'llvm-toolchain-trusty-7' ]
+          sources: 
+            - 'llvm-toolchain-trusty-7'
+            - 'ubuntu-toolchain-r-test'
           packages: 
-            - 'clang-format-8'
+            - 'clang-format-7'
       script: 
         - make clang-format
 
