@@ -8,11 +8,13 @@ matrix:
       script: 
         - make build-docker
     - name: clang-format
-      addons:
-        apt:
-          sources: [ 'ubuntu-toolchain-r-test' ]
-          packages: 
-            - 'clang-format'
+      install:
+        - apt-cache search clang-format
+      # addons:
+      #   apt:
+      #     sources: [ 'ubuntu-toolchain-r-test' ]
+      #     packages: 
+      #       - 'clang-format'
       script: 
         - make clang-format
 
