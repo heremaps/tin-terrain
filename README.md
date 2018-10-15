@@ -129,8 +129,17 @@ cmake -GXcode -DGDAL_LIBRARY=/usr/local/Cellar/gdal/2.3.1_2/lib/libgdal.dylib pa
     ```
 
 The resulting binary should then be ready.
-To run the tests, build and run the tntn-tests target.
+To run the tests, build and run the tntn-tests target:
 
+1. Recreate Makefile (and set TNTN_TEST=ON):
+    ```
+    cd build-cmake-release
+    cmake -DTNTN_TEST=ON -DCMAKE_BUILD_TYPE=Debug path/to/sourcecode/
+    ```
+2. Build the `tntn-tests` target
+    ```
+    VERBOSE=1 make tntn-tests
+    ```
 
 ## Usage
 
