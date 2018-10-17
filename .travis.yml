@@ -7,6 +7,11 @@ matrix:
         - docker
       script: 
         - make build-docker
+    - name: run-tests
+      services: 
+        - docker
+      script: 
+        - make docker-test
     - name: clang-format
       env: CLANG_FORMAT_BIN=clang-format-8
       install:
