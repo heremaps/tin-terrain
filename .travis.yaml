@@ -1,0 +1,4 @@
+language: cpp
+os: linux
+compiler:
+  - clang
