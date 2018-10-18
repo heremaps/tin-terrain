@@ -1,0 +1,33 @@
+language: cpp
+os: linux
+compiler:
+  - clang
+addons:
+  apt:
+    update: true
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-trusty-6.0
+    packages:
+      - cmake
+      - cmake-data
+      - clang-6.0
+      - libboost-all-dev
+      - build-essential
+env:
+  - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+  - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
+  - sudo apt update 
+  - sudo apt install libgdal-dev gdal-bin
+
+script:
+  - mkdir build-cmake-release
+  - cd build-cmake-release
+  - cmake -DCMAKE_CXX_FLAGS="-DGDAL_VERSION_2_2=1 --std=c++11" -DTNTN_TEST=ON -DCMAKE_BUILD_TYPE=Debug ../.
+  - VERBOSE=1 make -j2 tin-terrain
+  - VERBOSE=1 make -j2 tntn-tests
+  - test/tntn-tests
+  

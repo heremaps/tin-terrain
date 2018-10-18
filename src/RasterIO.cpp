@@ -283,13 +283,37 @@ static bool is_valid_projection(GDALDataset* dataset)
     }
 
     OGRSpatialReference raster_srs;
+
+#ifdef GDAL_VERSION_2_2
+    raster_srs.importFromWkt(const_cast<char**>(&projection_wkt));
+#else
     raster_srs.importFromWkt(projection_wkt);
+#endif
 
     int matches_number;
 
+    OGRSpatialReference web_mercator;
+    web_mercator.importFromEPSG(3857);
+
+    bool matched = false;
+
+#ifdef GDAL_VERSION_2_2
+    OGRErr match_projection_error = raster_srs.AutoIdentifyEPSG();
+
+    if(match_projection_error != 0)
+    {
+        TNTN_LOG_ERROR("Can not match projection to EPSG:3857");
+        return false;
+    }
+
+    if(web_mercator.IsSame(&raster_srs))
+    {
+        matched = true;
+    }
+#else
     // Matched projections must be freed with OSRFreeSRSArray()
     OGRSpatialReferenceH* matched_projections =
-        raster_srs.FindMatches(NULL, &matches_number, NULL);
+            raster_srs.FindMatches(NULL, &matches_number, NULL);
 
     if(matched_projections == 0)
     {
@@ -297,10 +321,6 @@ static bool is_valid_projection(GDALDataset* dataset)
         return false;
     }
 
-    OGRSpatialReference web_mercator;
-    web_mercator.importFromEPSG(3857);
-
-    bool matched = false;
     for(int i = 0; i < matches_number; i++)
     {
         if(web_mercator.IsSame(static_cast<OGRSpatialReference*>(matched_projections[i])))
@@ -314,6 +334,7 @@ static bool is_valid_projection(GDALDataset* dataset)
     {
         OSRFreeSRSArray(matched_projections);
     }
+#endif
 
     if(!matched)
     {
