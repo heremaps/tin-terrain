@@ -1,21 +1,92 @@
 language: cpp
-os: linux
-compiler:
-  - clang
-addons:
-  apt:
-    update: true
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-6.0
-    packages:
-      - cmake
-      - cmake-data
-      - clang-6.0
-      - libboost-all-dev
-      - build-essential
-env:
-  - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
+
+matrix:
+  include:
+    - name: "Linux clang debug"
+      os: linux
+      compiler:
+        - clang
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+          packages:
+            - cmake
+            - cmake-data
+            - clang-6.0
+            - libboost-all-dev
+            - build-essential
+      env:
+        - MATRIX_EVAL="CC=/usr/local/clang-5.0.0/bin/clang && CXX=/usr/local/clang-5.0.0/bin/clang++"
+        - BUILD_TYPE="Debug"
+        - BUILD_FLAGS=""
+        - CMAKE_FLAGS=""
+    - name: "Linux gcc debug"
+      os: linux
+      compiler:
+        - gcc
+      sudo: required
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+            - cmake
+            - cmake-data
+            - libboost-all-dev
+            - build-essential
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+        - BUILD_TYPE="Debug"
+        - BUILD_FLAGS=""
+        - CMAKE_FLAGS=""
+    - name: "Linux clang release"
+      os: linux
+      compiler:
+        - clang
+      sudo: required
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+          packages:
+            - cmake
+            - cmake-data
+            - clang-6.0
+            - libboost-all-dev
+            - build-essential
+      env:
+        - MATRIX_EVAL="CC=/usr/local/clang-5.0.0/bin/clang && CXX=/usr/local/clang-5.0.0/bin/clang++"
+        - BUILD_TYPE="Release"
+        - BUILD_FLAGS=""
+        - CMAKE_FLAGS=""
+    - name: "Linux gcc release"
+      os: linux
+      compiler:
+        - gcc
+      sudo: required
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+            - cmake
+            - cmake-data
+            - libboost-all-dev
+            - build-essential
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+        - BUILD_TYPE="Release"
+        - BUILD_FLAGS=""
+        - CMAKE_FLAGS='-DCMAKE_CXX_FLAGS_RELEASE="-O2"'
 
 before_install:
   - eval "${MATRIX_EVAL}"
@@ -26,8 +97,8 @@ before_install:
 script:
   - mkdir build-cmake-release
   - cd build-cmake-release
-  - cmake -DCMAKE_CXX_FLAGS="-DGDAL_VERSION_2_2=1 --std=c++11" -DTNTN_TEST=ON -DCMAKE_BUILD_TYPE=Debug ../.
-  - VERBOSE=1 make -j2 tin-terrain
-  - VERBOSE=1 make -j2 tntn-tests
+  - cmake "${CMAKE_FLAGS}" -DCMAKE_CXX_FLAGS="-DGDAL_VERSION_2_2=1 --std=c++11 ${BUILD_FLAGS}" -DTNTN_TEST=ON -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" ../.
+  - VERBOSE=1 make tin-terrain 
+  - VERBOSE=1 make tntn-tests
   - test/tntn-tests
-  
+
