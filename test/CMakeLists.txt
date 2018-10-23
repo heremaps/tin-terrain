@@ -16,6 +16,11 @@ add_executable(tntn-tests
 
     src/main.cpp
     
+    #common
+    src/test_common.cpp
+    src/test_common.h
+
+    #tests
     src/Mesh_tests.cpp
     src/geometrix_tests.cpp
     src/SurfacePoints_tests.cpp
@@ -33,6 +38,7 @@ add_executable(tntn-tests
     src/println_tests.cpp
     src/raster_tools_tests.cpp
 	src/RasterIO_tests.cpp
+    src/RasterOverviews_tests.cpp
 
 	#data
     src/vertex_points.cpp
@@ -40,6 +46,8 @@ add_executable(tntn-tests
     src/triangle_indices.cpp
     src/triangle_indices.h    
 )
+
+set (CMAKE_CXX_FLAGS "--std=c++11")
 
 get_filename_component(TNTN_FIXTURES_LOCATION "fixtures" ABSOLUTE)
 
@@ -71,7 +79,6 @@ target_compile_definitions(tntn-tests
     PRIVATE
     TNTN_FIXTURES_PATH="${TNTN_FIXTURES_LOCATION}"
 )
-
 
 target_include_directories(tntn-tests
     PRIVATE
