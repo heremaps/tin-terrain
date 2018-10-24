@@ -779,6 +779,10 @@ int tin_terrain_commandline_action(std::vector<std::string> args)
         TNTN_LOG_FATAL("program options error: {}", e.what());
         return -1;
     }
+	catch(const std::bad_alloc &ba) {
+		TNTN_LOG_FATAL("tin-terrain failed to allocate enough memory. please consider using smaller dataset (std::bad_alloc)");
+		return -1;
+	}
     catch(const std::exception& e)
     {
         TNTN_LOG_FATAL("exception: {}", e.what());
