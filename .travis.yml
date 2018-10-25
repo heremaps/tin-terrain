@@ -136,7 +136,6 @@ matrix:
         - CMAKE_FLAGS='-DCMAKE_CXX_FLAGS_RELEASE="-O2"'
         - TEST_TASK="test"
     - name: clang-format
-      env: CLANG_FORMAT_BIN=clang-format-8
       install:
         - apt-cache search clang-format
       addons:
@@ -147,7 +146,13 @@ matrix:
           packages: 
             - 'clang-format-8'
       env:
+        - CLANG_FORMAT_BIN=clang-format-8
         - TEST_TASK="format"
+    - name: "Build docker image"
+      services: 
+        - docker
+      env:
+        - TEST_TASK="docker"
 
 before_install:
   - eval "${MATRIX_EVAL}"
@@ -166,4 +171,7 @@ script:
     elif [ $TEST_TASK == 'format' ];
     then
       ./check-clang-format.sh;
+    elif [ $TEST_TASK == 'docker' ];
+    then
+      ./build-docker.sh;
     fi
