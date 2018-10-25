@@ -23,6 +23,7 @@ matrix:
         - BUILD_TYPE="Debug"
         - BUILD_FLAGS=""
         - CMAKE_FLAGS=""
+        - TEST_TASK="test"
     - name: "Linux gcc debug"
       os: linux
       compiler:
@@ -44,6 +45,7 @@ matrix:
         - BUILD_TYPE="Debug"
         - BUILD_FLAGS=""
         - CMAKE_FLAGS=""
+        - TEST_TASK="test"
     - name: "Linux clang release"
       os: linux
       compiler:
@@ -66,6 +68,7 @@ matrix:
         - BUILD_TYPE="Release"
         - BUILD_FLAGS=""
         - CMAKE_FLAGS=""
+        - TEST_TASK="test"
     - name: "Linux gcc release"
       os: linux
       compiler:
@@ -87,6 +90,20 @@ matrix:
         - BUILD_TYPE="Release"
         - BUILD_FLAGS=""
         - CMAKE_FLAGS='-DCMAKE_CXX_FLAGS_RELEASE="-O2"'
+        - TEST_TASK="test"
+    - name: clang-format
+      env: CLANG_FORMAT_BIN=clang-format-8
+      install:
+        - apt-cache search clang-format
+      addons:
+        apt:
+          sources: 
+            - 'llvm-toolchain-trusty'
+            - 'ubuntu-toolchain-r-test'
+          packages: 
+            - 'clang-format-8'
+      env:
+        - TEST_TASK="format"
 
 before_install:
   - eval "${MATRIX_EVAL}"
@@ -95,10 +112,14 @@ before_install:
   - sudo apt install libgdal-dev gdal-bin
 
 script:
-  - mkdir build-cmake-release
-  - cd build-cmake-release
-  - cmake "${CMAKE_FLAGS}" -DCMAKE_CXX_FLAGS="-DGDAL_VERSION_2_2=1 --std=c++11 ${BUILD_FLAGS}" -DTNTN_TEST=ON -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" ../.
-  - VERBOSE=1 make tin-terrain 
-  - VERBOSE=1 make tntn-tests
-  - test/tntn-tests
-
+  - if [ $TEST_TASK == 'test' ];
+    then
+      mkdir build-cmake-release;
+      cd build-cmake-release;
+      cmake "${CMAKE_FLAGS}" -DCMAKE_CXX_FLAGS="-DGDAL_VERSION_2_2=1 --std=c++11 ${BUILD_FLAGS}" -DTNTN_TEST=ON -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" ../.;
+      VERBOSE=1 make tin-terrain tntn-tests;
+      test/tntn-tests;
+    elif [ $TEST_TASK == 'format' ];
+    then
+      ./check-clang-format.sh;
+    fi
