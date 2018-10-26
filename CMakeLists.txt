@@ -40,8 +40,8 @@ execute_process(
   OUTPUT_VARIABLE SYSTEM_GDAL_VERSION
 )
 
-if(SYSTEM_GDAL_VERSION VERSION_LESS "2.3")
-    message(FATAL_ERROR "GDAL version \"${SYSTEM_GDAL_VERSION}\" is too old, at least 2.3 is required")
+if(SYSTEM_GDAL_VERSION VERSION_LESS "2.2")
+    message(FATAL_ERROR "GDAL version \"${SYSTEM_GDAL_VERSION}\" is too old, at least 2.2 is required")
 endif()
 
 # Boost

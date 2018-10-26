@@ -102,7 +102,7 @@ class Raster
      @param w width of raster
      @param h height of raster
     */
-    Raster(const uint w, const uint h) : Raster() { allocate(w, h); }
+    Raster(const unsigned int w, const unsigned int h) : Raster() { allocate(w, h); }
 
     /**
      copies settable parameters from parent raster
@@ -139,7 +139,7 @@ class Raster
      @param w width of raster
      @param h height of raster
     */
-    void allocate(const uint w, const uint h)
+    void allocate(const unsigned int w, const unsigned int h)
     {
         m_width = w;
         m_height = h;
@@ -185,7 +185,10 @@ class Raster
      @param ch height of sub image
      @return the sub image with updated xpos & ypos and correct cellsize parameter
     */
-    Raster crop_ll(const uint cx, const uint cy, const uint cw, const uint ch) const
+    Raster crop_ll(const unsigned int cx,
+                   const unsigned int cy,
+                   const unsigned int cw,
+                   const unsigned int ch) const
     {
         int cyn = m_height - (cy + ch);
         return crop(cx, cyn, cw, ch);
@@ -280,7 +283,10 @@ class Raster
      @param ch height of sub image
      @return the sub image with updated xpos & ypos and correct cellsize parameter
     */
-    Raster crop(const uint cx, const uint cy, const uint cw, const uint ch) const
+    Raster crop(const unsigned int cx,
+                const unsigned int cy,
+                const unsigned int cw,
+                const unsigned int ch) const
     {
         Raster dst_raster;
         crop(cx, cy, cw, ch, dst_raster);
@@ -308,12 +314,12 @@ class Raster
     /**
      @return raster width in pixels
     */
-    uint get_width() const { return m_width; }
+    unsigned int get_width() const { return m_width; }
 
     /**
      @return raster height in pixels
      */
-    uint get_height() const { return m_height; }
+    unsigned int get_height() const { return m_height; }
 
     /**
      get tile position in geo coordinates
@@ -374,14 +380,17 @@ class Raster
      @param r row
      @return raw pointer
     */
-    T* get_ptr(const uint r) const { return m_data.get() + r * m_width; }
+    T* get_ptr(const unsigned int r) const { return m_data.get() + r * m_width; }
 
     /**
      get raw pointer to beginning of raster row (lower left is origin)
      @param r row
      @return raw pointer
     */
-    T* get_ptr_ll(const uint r) const { return m_data.get() + (m_height - 1 - r) * m_width; }
+    T* get_ptr_ll(const unsigned int r) const
+    {
+        return m_data.get() + (m_height - 1 - r) * m_width;
+    }
 
     /**
      get value at raster position
@@ -390,7 +399,7 @@ class Raster
      @param c column
      @return value
     */
-    T& value(const uint r, const uint c) const { return get_ptr(r)[c]; }
+    T& value(const unsigned int r, const unsigned int c) const { return get_ptr(r)[c]; }
 
     /**
      get value at raster position (using lower left coordinate system)
@@ -399,7 +408,7 @@ class Raster
      @param c column
      @return value
     */
-    T& value_ll(const uint r, const uint c) const { return get_ptr_ll(r)[c]; }
+    T& value_ll(const unsigned int r, const unsigned int c) const { return get_ptr_ll(r)[c]; }
 
     /**
      get x component of geo/world coordinates at column c
@@ -407,7 +416,7 @@ class Raster
      @param c column
      @return x geo coordinates
     */
-    double col2x(const uint c) const { return m_xpos + (c + 0.5) * m_cellsize; }
+    double col2x(const unsigned int c) const { return m_xpos + (c + 0.5) * m_cellsize; }
 
     int x2col(double x) const
     {
@@ -445,7 +454,7 @@ class Raster
      @param c column
      @return x geo coordinates
     */
-    double row2y(const uint r_tl) const
+    double row2y(const unsigned int r_tl) const
     {
         int r_ll = m_height - 1 - r_tl;
         return m_ypos + (r_ll + 0.5) * m_cellsize;
@@ -458,7 +467,7 @@ class Raster
      @param r row from lower left
      @return y geo coordinates
     */
-    double row_ll2y(const uint r_ll) const { return m_ypos + (r_ll + 0.5) * m_cellsize; }
+    double row_ll2y(const unsigned int r_ll) const { return m_ypos + (r_ll + 0.5) * m_cellsize; }
 
     /**
      get x component of geo/world coordinates at column c
@@ -467,7 +476,7 @@ class Raster
      @param c column from lower left
      @return x geo coordinates
     */
-    double col_ll2x(const uint c) const { return col2x(c); }
+    double col_ll2x(const unsigned int c) const { return col2x(c); }
 
     /**
      is raster empty
@@ -523,8 +532,8 @@ class Raster
 
   private:
     // raster width and height
-    uint m_width = 0;
-    uint m_height = 0;
+    unsigned int m_width = 0;
+    unsigned int m_height = 0;
 
     // tile position in world coordinates
     double m_xpos = 0;

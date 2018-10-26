@@ -39,6 +39,11 @@ inline void println(const T& t)
     detail::print_impl(static_cast<const std::stringstream&>(std::stringstream() << t), true);
 }
 
+inline void println(const std::basic_ostream<char>& s)
+{
+    detail::print_impl(static_cast<const std::stringstream&>(s), true);
+}
+
 inline void println(const std::stringstream& s)
 {
     detail::print_impl(s, true);
@@ -101,6 +106,11 @@ inline void print(const T& t)
 inline void print(const std::stringstream& s)
 {
     detail::print_impl(s, false);
+}
+
+inline void print(const std::basic_ostream<char>& s)
+{
+    detail::print_impl(static_cast<const std::stringstream&>(s), false);
 }
 
 inline void print(const std::string& s)
