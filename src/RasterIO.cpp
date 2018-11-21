@@ -284,7 +284,7 @@ static bool is_valid_projection(GDALDataset* dataset)
 
     OGRSpatialReference raster_srs;
 
-#ifdef GDAL_VERSION_2_2
+#if GDAL_VERSION_MAJOR == 2 && GDAL_VERSION_MINOR < 3
     raster_srs.importFromWkt(const_cast<char**>(&projection_wkt));
 #else
     raster_srs.importFromWkt(projection_wkt);
@@ -297,7 +297,7 @@ static bool is_valid_projection(GDALDataset* dataset)
 
     bool matched = false;
 
-#ifdef GDAL_VERSION_2_2
+#if GDAL_VERSION_MAJOR == 2 && GDAL_VERSION_MINOR < 3
     OGRErr match_projection_error = raster_srs.AutoIdentifyEPSG();
 
     if(match_projection_error != 0)
