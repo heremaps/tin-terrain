@@ -8,9 +8,6 @@
 
 namespace tntn {
 
-const int MINIMAL_RASTER_SIZE = 128;
-const double EARTH_RADIUS = 6378137.0;
-
 RasterOverviews::RasterOverviews(UniqueRasterPointer input_raster, int min_zoom, int max_zoom) :
     m_base_raster(std::move(input_raster)),
     m_min_zoom(min_zoom),
@@ -25,23 +22,23 @@ RasterOverviews::RasterOverviews(UniqueRasterPointer input_raster, int min_zoom,
 // Guesses (numerically) maximal zoom level from a raster resolution
 int RasterOverviews::guess_max_zoom_level(double resolution)
 {
- 
-    // At zoom level 0, we have 1 tile for the whole earth. Therefore if a raster at zoom level 0
-    // has MINIMAL_RASTER_SIZE pixels, a pixel corresponds to radius / MINIMAL_RASTER_SIZE meters.
-    // the maximum zoom level is then calculated, by obtaining the maximum resolution (i.e. the size of a pixel in
-    // the raster in meters) of the raster and seeing how often it fits by a factor of 2 into a single pixel at zoom
-    // level 0 
-
-    // Size of one pixel in meters at z=0
-    const double pixel_size_z0 = EARTH_RADIUS * 2.0 * M_PI / MINIMAL_RASTER_SIZE;
+	// pixel_size_z0 is a magic number that is number of meters per pixel on zoom level 0, given tile size is 256 pixels.
+	// This number is approximate and does not account for latitude, i.e. uses pixel size on equator.
+	// The formula is: earth circumference * 2 * pi / 256
+	// "Real" number can be off up to 30% depending on the latitude. More details here: https://msdn.microsoft.com/en-us/library/aa940990.aspx
+	const double pixel_size_z0 = 156543.04; 
     return static_cast<int>(round(log2(pixel_size_z0 / resolution)));
 }
 
 // Guesses (numerically) minimal zoom level from a raster resolution and it's size
 int RasterOverviews::guess_min_zoom_level(int max_zoom_level)
 {
-    // This calculates the minimum zoom level, at which the input raster is just one pixel.
-    const double num_pixels_at_max_zoom_level = MINIMAL_RASTER_SIZE * (1 << max_zoom_level);
+	// This constant is an arbitrary number representing some minimal size to which the raster can be downsized when 'zooming out' a map.
+	// Math is simple:
+	// 2**max_zoom = raster_size; 2**min_zoom = 128
+	// Solve it in regards to min_zoom and there you have it.
+	const int MINIMAL_RASTER_SIZE = 128;
+    const double quotient = MINIMAL_RASTER_SIZE * (1 << max_zoom_level);
 
     int raster_width = m_base_raster->get_width();
     int raster_height = m_base_raster->get_height();
@@ -50,9 +47,10 @@ int RasterOverviews::guess_min_zoom_level(int max_zoom_level)
                        raster_width,
                        raster_height);
 
-    int zoom_x = static_cast<int>(floor(log2(num_pixels_at_max_zoom_level / raster_width)));
-    int zoom_y = static_cast<int>(floor(log2(num_pixels_at_max_zoom_level / raster_height)));
+    int zoom_x = static_cast<int>(floor(log2(quotient / raster_width)));
+    int zoom_y = static_cast<int>(floor(log2(quotient / raster_height)));
 
+	// Cap the resulting value so it won't go below 0 and we wouldn't end up with negative zoom levels
     return std::max(0, std::min(zoom_x, zoom_y));
 }
 
