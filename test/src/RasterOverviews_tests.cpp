@@ -30,7 +30,7 @@ TEST_CASE("raster_overviews_tests_1", "[tntn]")
 
     RasterOverview overview;
 
-    int zooms[1] = {16};
+    int zooms[1] = {15};
     double resolutions[1] = {3.916942};
 
     int counter = 0;
@@ -62,14 +62,14 @@ TEST_CASE("raster_overviews_tests_2", "[tntn]")
 
     RasterOverview overview;
 
-    int zooms[3] = {2, 1, 0};
-    double resolutions[3] = {64187.510960, 128375.021920, 256750.043840};
+    int zooms[2] = {1, 0};
+    double resolutions[2] = {64187.510960, 128375.021920};
 
     int counter = 0;
 
     while(overviews.next(overview))
     {
-       REQUIRE(counter < 3);
+       REQUIRE(counter < 2);
        REQUIRE(overview.zoom_level == zooms[counter]);
        REQUIRE(double_eq(overview.resolution, resolutions[counter], 0.01));
 

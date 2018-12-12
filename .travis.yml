@@ -165,7 +165,7 @@ script:
     then
       mkdir build-cmake-release;
       cd build-cmake-release;
-      cmake "${CMAKE_FLAGS}" -DCMAKE_CXX_FLAGS="-DGDAL_VERSION_2_2=1 --std=c++11 ${BUILD_FLAGS}" -DTNTN_TEST=ON -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" ../.;
+      cmake "${CMAKE_FLAGS}" -DCMAKE_CXX_FLAGS="--std=c++11 ${BUILD_FLAGS}" -DTNTN_TEST=ON -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" ../.;
       VERBOSE=1 make tin-terrain tntn-tests;
       test/tntn-tests;
     elif [ $TEST_TASK == 'format' ];
