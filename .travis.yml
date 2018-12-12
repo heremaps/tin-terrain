@@ -156,6 +156,7 @@ matrix:
 
 before_install:
   - eval "${MATRIX_EVAL}"
+  - sudo rm -vf /etc/apt/sources.list.d/*rabbit*
   - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
   - sudo apt update 
   - sudo apt install libgdal-dev gdal-bin

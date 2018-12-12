@@ -109,7 +109,6 @@ constexpr int QUANTIZED_COORDINATE_SIZE = 32767;
 static unsigned int scale_coordinate(const double v)
 {
     const int scaled_v = static_cast<int>(v * QUANTIZED_COORDINATE_SIZE);
-    TNTN_ASSERT(v >= 0 && v <= QUANTIZED_COORDINATE_SIZE);
     return scaled_v;
 }
 

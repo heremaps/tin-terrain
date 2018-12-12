@@ -84,7 +84,7 @@ bool TileMaker::dumpTile(int tx, int ty, int zoom, const char* filename, MeshWri
         {
             if(triangle[i].z < tileSpaceBbox.min.z)
                 tileSpaceBbox.min.z = triangle[i].z;
-            else if(triangle[i].z > tileSpaceBbox.max.z)
+            if(triangle[i].z > tileSpaceBbox.max.z)
                 tileSpaceBbox.max.z = triangle[i].z;
         }
     }
