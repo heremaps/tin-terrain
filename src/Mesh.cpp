@@ -5,11 +5,11 @@
 #include <limits>
 #include <unordered_map>
 #include <unordered_set>
+#include <glm/gtx/normal.hpp>
 
 #include "tntn/tntn_assert.h"
 #include "tntn/logging.h"
 #include "tntn/geometrix.h"
-
 namespace tntn {
 
 void Mesh::clear()
@@ -215,6 +215,15 @@ SimpleRange<const Vertex*> Mesh::vertices() const
         return {nullptr, nullptr};
     }
     return {m_vertices.data(), m_vertices.data() + m_vertices.size()};
+}
+
+SimpleRange<const Normal*> Mesh::vertex_normals() const
+{
+    if(m_normals.empty())
+    {
+        return {nullptr, nullptr};
+    }
+    return {m_normals.data(), m_normals.data() + m_normals.size()};
 }
 
 void Mesh::grab_triangles(std::vector<Triangle>& into)
@@ -708,6 +717,40 @@ bool Mesh::check_tin_properties() const
 
     TNTN_LOG_DEBUG("mesh is a regular/propper TIN");
     return true;
+}
+
+void Mesh::compute_vertex_normals()
+{
+    using namespace glm;
+
+    std::vector<dvec3> face_normals;
+    face_normals.reserve(m_faces.size());
+    m_normals.resize(m_vertices.size());
+
+    auto face_normal = [](const Triangle& t) {
+        return normalize(cross(t[0] - t[2], t[1] - t[2]));
+    };
+
+    std::transform(m_triangles.begin(), m_triangles.end(), face_normals.begin(), face_normal);
+
+    const int faces_count = m_faces.size();
+
+    for(int f = 0; f < faces_count; f++)
+    {
+        const auto& face = m_faces[f];
+        const auto& face_normal = face_normals[f];
+
+        for(int v = 0; v < 3; v++)
+        {
+            const int vertex_id = face[v];
+            m_normals[vertex_id] += face_normal;
+        }
+    }
+
+    for(auto& vertex_normal : m_normals)
+    {
+        vertex_normal = normalize(vertex_normal);
+    }
 }
 
 } //namespace tntn

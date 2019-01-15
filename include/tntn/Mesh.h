@@ -44,7 +44,8 @@ class Mesh
     SimpleRange<const Triangle*> triangles() const;
     SimpleRange<const Face*> faces() const;
     SimpleRange<const Vertex*> vertices() const;
-
+	SimpleRange<const Normal*> vertex_normals() const;
+	
     void grab_triangles(std::vector<Triangle>& into);
     void grab_decomposed(std::vector<Vertex>& vertices, std::vector<Face>& faces);
 
@@ -62,6 +63,8 @@ class Mesh
     bool is_square() const;
     bool check_for_holes_in_square_mesh() const;
 
+	void compute_vertex_normals();
+	
   private:
     bool semantic_equal_tri_tri(const Mesh& other) const;
     bool semantic_equal_dec_dec(const Mesh& other) const;
@@ -70,7 +73,8 @@ class Mesh
     std::vector<Vertex> m_vertices;
     std::vector<Face> m_faces;
     std::vector<Triangle> m_triangles;
-
+	std::vector<Normal> m_normals;
+	
     void decompose_triangle(const Triangle& t);
 };
 
