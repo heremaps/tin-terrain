@@ -64,6 +64,7 @@ class Mesh
     bool check_for_holes_in_square_mesh() const;
 
 	void compute_vertex_normals();
+	bool has_normals() const;
 	
   private:
     bool semantic_equal_tri_tri(const Mesh& other) const;

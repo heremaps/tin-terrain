@@ -17,6 +17,7 @@ void Mesh::clear()
     m_triangles.clear();
     m_vertices.clear();
     m_faces.clear();
+	m_normals.clear();
 }
 
 void Mesh::clear_triangles()
@@ -36,6 +37,7 @@ Mesh Mesh::clone() const
     out.m_faces = m_faces;
     out.m_vertices = m_vertices;
     out.m_triangles = m_triangles;
+	out.m_normals = m_normals;
     return out;
 }
 
@@ -719,6 +721,11 @@ bool Mesh::check_tin_properties() const
     return true;
 }
 
+bool Mesh::has_normals() const
+{
+	return !m_normals.empty();
+}
+
 void Mesh::compute_vertex_normals()
 {
     using namespace glm;
@@ -747,10 +754,8 @@ void Mesh::compute_vertex_normals()
         }
     }
 
-    for(auto& vertex_normal : m_normals)
-    {
-        vertex_normal = normalize(vertex_normal);
-    }
+	std::transform(m_normals.begin(), m_normals.end(), m_normals.begin(),
+				   [](const auto &n) { return normalize(n); });
 }
 
 } //namespace tntn
