@@ -41,6 +41,11 @@ void TileMaker::loadMesh(std::unique_ptr<Mesh> mesh)
     m_mesh = std::move(mesh);
 }
 
+bool TileMaker::normals_enabled() const
+{
+    return m_normals_enabled;
+}
+
 // Dump a tile into an terrain tile in format determined by a MeshWriter
 bool TileMaker::dumpTile(int tx, int ty, int zoom, const char* filename, MeshWriter& mesh_writer)
 {
@@ -82,10 +87,8 @@ bool TileMaker::dumpTile(int tx, int ty, int zoom, const char* filename, MeshWri
     {
         for(int i = 0; i < 3; i++)
         {
-            if(triangle[i].z < tileSpaceBbox.min.z)
-                tileSpaceBbox.min.z = triangle[i].z;
-            if(triangle[i].z > tileSpaceBbox.max.z)
-                tileSpaceBbox.max.z = triangle[i].z;
+            if(triangle[i].z < tileSpaceBbox.min.z) tileSpaceBbox.min.z = triangle[i].z;
+            if(triangle[i].z > tileSpaceBbox.max.z) tileSpaceBbox.max.z = triangle[i].z;
         }
     }
 
@@ -119,6 +122,11 @@ bool TileMaker::dumpTile(int tx, int ty, int zoom, const char* filename, MeshWri
     Mesh tileMesh;
     tileMesh.from_triangles(std::move(trianglesInTile));
     tileMesh.generate_decomposed();
+
+    if(normals_enabled())
+    {
+        tileMesh.compute_vertex_normals();
+    }
 
     return mesh_writer.write_mesh_to_file(filename, tileMesh, tileSpaceBbox);
 }
