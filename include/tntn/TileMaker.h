@@ -16,7 +16,7 @@ class TileMaker
     TileMaker(bool normals_enabled=false) : m_mesh(std::make_unique<Mesh>()),
 											m_normals_enabled(normals_enabled) {}
 
-	bool normals_enabled() const;
+    bool normals_enabled() const;
     void setMeshWriter(MeshWriter* w);
     bool loadObj(const char* filename);
     void loadMesh(std::unique_ptr<Mesh> mesh);

@@ -177,8 +177,8 @@ static int subcommand_dem2tintiles(bool need_help,
         throw po::error(std::string("unknown method ") + meshing_method);
     }
 
-	bool write_normals = local_varmap["normals"].as<bool>();
-	
+    bool write_normals = local_varmap["normals"].as<bool>();
+
     RasterOverviews overviews(std::move(input_raster), min_zoom, max_zoom);
 
     RasterOverview overview;
@@ -217,7 +217,7 @@ static int subcommand_dem2tintiles(bool need_help,
         if(!create_tiles_for_zoom_level(*overview.raster,
                                         partitions,
                                         zoom_level,
-										write_normals,
+                                        write_normals,
                                         output_basedir,
                                         max_error,
                                         meshing_method,
