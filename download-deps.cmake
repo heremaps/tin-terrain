@@ -150,7 +150,7 @@ if(TNTN_TEST)
     #data is in EPSG:27700 aka OSGB 1936 / British National Grid
     #look at tile tq3389_DSM_50CM.asc - Tottenham for an interesting city DSM
     download_verify_unpack(
-        "https://www.geostore.com/environment-agency/rest/product/download/66314096-70be-11e8-9314-8cdcd4b4861c"
+        "https://environment.data.gov.uk/UserDownloads/interactive/dcbcae4faa49490186edaa3b991025f549808/LIDARCOMP/LIDAR-DSM-50CM-TQ38nw.zip"
         "${CMAKE_SOURCE_DIR}/3rdparty/uk-lidar-composite/LIDAR-DSM-50CM-TQ38nw.zip"
         "f0c8f1cfbffba35122f1be6ba77df15a1f0c666cf4d49b44410bc9ea782cde46c1c24d9e0936aaf477d6a717cfcea64ebc8421155664929cb828e9806748c16b"
     )
