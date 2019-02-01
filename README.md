@@ -2,7 +2,7 @@
 
 TIN Terrain is a command-line tool for converting heightmaps presented in GeoTIFF format into tiled optimized meshes (Triangulated Irregular Network) with different levels of details.
 
-Check out [heremaps/quantized-mesh-viewer](https://github.com/heremaps/quantized-mesh-viewer) for examples of rendering output in [Cesium.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/map/surface-provider.js) and [Three.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/tile/index.js)
+Check out [heremaps/quantized-mesh-viewer](https://github.com/heremaps/quantized-mesh-viewer) for examples of rendering output in [Cesium.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/map/surface-provider.js) and [Three.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/tile/index.js).
 
 Note: This is experimental code, expect changes.
 
