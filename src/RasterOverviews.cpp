@@ -60,12 +60,18 @@ void RasterOverviews::compute_zoom_levels()
     m_estimated_min_zoom = guess_min_zoom_level(m_estimated_max_zoom);
 
     m_min_zoom = std::max(m_min_zoom, m_estimated_min_zoom);
-    m_max_zoom = std::min(std::max(0, m_max_zoom), m_estimated_max_zoom);
+
+    if(m_max_zoom < 0 || m_max_zoom > m_estimated_max_zoom)
+    {
+        m_max_zoom = m_estimated_max_zoom;
+    }
 
     if(m_max_zoom < m_min_zoom)
     {
         std::swap(m_min_zoom, m_max_zoom);
     }
+
+	TNTN_LOG_INFO("After checking with data, tiles will be generated in a range between {} and {}", m_min_zoom, m_max_zoom);
 }
 
 bool RasterOverviews::next(RasterOverview& overview)
