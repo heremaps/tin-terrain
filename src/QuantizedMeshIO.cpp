@@ -12,6 +12,9 @@
 #include <unordered_map>
 #include "glm/glm.hpp"
 
+#include <ogr_spatialref.h>
+#include <gdal_priv.h>
+
 //FIXME: remove collappsed vertices/triangles after quantization of mesh
 
 namespace tntn {
@@ -295,6 +298,25 @@ static void write_qmheader(BinaryIO& bio,
     bio.write_double(qmheader.horizon_occlusion.z, e);
 }
 
+bool point_to_ecef(Vertex& p)
+{
+    OGRSpatialReference mercator;
+    OGRSpatialReference ecef;
+
+    mercator.importFromEPSG(3857);
+    ecef.importFromEPSG(4978);
+
+    std::unique_ptr<OGRCoordinateTransformation> tr(
+        OGRCreateCoordinateTransformation(&mercator, &ecef));
+
+    if(tr == nullptr)
+    {
+        return false;
+    }
+
+    return (bool)tr->Transform(1, &p.x, &p.y, &p.z);
+}
+
 bool write_mesh_as_qm(const std::shared_ptr<FileLike>& f,
                       const Mesh& m,
                       const BBox3D& bbox,
@@ -312,6 +334,12 @@ bool write_mesh_as_qm(const std::shared_ptr<FileLike>& f,
 
     // Write QM Header
     Vertex c = (bbox.max + bbox.min) / 2.0;
+
+    if(!point_to_ecef(c))
+    {
+        TNTN_LOG_ERROR("Conversion of tile center to ECEF coordinate system failed");
+        return false;
+    }
 
     QuantizedMeshHeader header;
     header.center = c;
