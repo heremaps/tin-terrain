@@ -136,7 +136,7 @@ matrix:
         - CMAKE_FLAGS='-DCMAKE_CXX_FLAGS_RELEASE="-O2"'
         - TEST_TASK="test"
     - name: clang-format
-      install:
+      before_install:
         - apt-cache search clang-format
       addons:
         apt:
