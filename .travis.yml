@@ -46,50 +46,6 @@ matrix:
         - BUILD_FLAGS=""
         - CMAKE_FLAGS=""
         - TEST_TASK="test"
-    - name: "Linux clang debug fsanitize"
-      os: linux
-      compiler:
-        - clang
-      addons:
-        apt:
-          update: true
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-6.0
-          packages:
-            - cmake
-            - cmake-data
-            - clang-6.0
-            - libboost-all-dev
-            - build-essential
-      env:
-        - MATRIX_EVAL="CC=/usr/local/clang-5.0.0/bin/clang && CXX=/usr/local/clang-5.0.0/bin/clang++"
-        - BUILD_TYPE="Debug"
-        - BUILD_FLAGS="-fsanitize=address"
-        - CMAKE_FLAGS=""
-        - TEST_TASK="test"
-    - name: "Linux gcc debug fsanitize"
-      os: linux
-      compiler:
-        - gcc
-      sudo: required
-      addons:
-        apt:
-          update: true
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-            - cmake
-            - cmake-data
-            - libboost-all-dev
-            - build-essential
-      env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-        - BUILD_TYPE="Debug"
-        - BUILD_FLAGS="-fsanitize=address -fuse-ld=gold"
-        - CMAKE_FLAGS=""
-        - TEST_TASK="test"
     - name: "Linux clang release"
       os: linux
       compiler:
@@ -136,43 +92,45 @@ matrix:
         - CMAKE_FLAGS='-DCMAKE_CXX_FLAGS_RELEASE="-O2"'
         - TEST_TASK="test"
     - name: clang-format
-      install:
-        - apt-cache search clang-format
+      # install:
+      #   - apt-cache search clang-format
       addons:
         apt:
-          sources: 
+          sources:
             - 'llvm-toolchain-trusty'
             - 'ubuntu-toolchain-r-test'
-          packages: 
-            - 'clang-format-8'
+          packages:
+            - 'clang-format'
       env:
-        - CLANG_FORMAT_BIN=clang-format-8
+        - CLANG_FORMAT_BIN=clang-format
         - TEST_TASK="format"
     - name: "Build docker image"
-      services: 
+      services:
         - docker
       env:
         - TEST_TASK="docker"
 
 before_install:
-  - eval "${MATRIX_EVAL}"
+  - eval "$MATRIX_EVAL"
   - sudo rm -vf /etc/apt/sources.list.d/*rabbit*
   - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
-  - sudo apt update 
+  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 762E3157
+  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 0C49F3730359A14518585931BC711F9BA15703C6
+  - sudo apt update
   - sudo apt install libgdal-dev gdal-bin
 
 script:
-  - if [ $TEST_TASK == 'test' ];
+  - if [ "$TEST_TASK" == "test" ];
     then
       mkdir build-cmake-release;
       cd build-cmake-release;
-      cmake "${CMAKE_FLAGS}" -DCMAKE_CXX_FLAGS="--std=c++11 ${BUILD_FLAGS}" -DTNTN_TEST=ON -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" ../.;
+      cmake "$CMAKE_FLAGS" -DCMAKE_CXX_FLAGS="--std=c++11 $BUILD_FLAGS" -DTNTN_TEST=ON -DCMAKE_BUILD_TYPE="$BUILD_TYPE" ../.;
       VERBOSE=1 make tin-terrain tntn-tests;
       test/tntn-tests;
-    elif [ $TEST_TASK == 'format' ];
+    elif [ "$TEST_TASK" == "format" ];
     then
       ./check-clang-format.sh;
-    elif [ $TEST_TASK == 'docker' ];
+    elif [ "$TEST_TASK" == "docker" ];
     then
       ./build-docker.sh;
     fi
