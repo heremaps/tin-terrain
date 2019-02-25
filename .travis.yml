@@ -136,17 +136,17 @@ matrix:
         - CMAKE_FLAGS='-DCMAKE_CXX_FLAGS_RELEASE="-O2"'
         - TEST_TASK="test"
     - name: clang-format
-      install:
-        - apt-cache search clang-format
+      # install:
+      #   - apt-cache search clang-format
       addons:
         apt:
           sources:
             - 'llvm-toolchain-trusty'
             - 'ubuntu-toolchain-r-test'
           packages:
-            # - 'clang-format-7'
+            - 'clang-format'
       env:
-        - CLANG_FORMAT_BIN=clang-format-7
+        - CLANG_FORMAT_BIN=clang-format
         - TEST_TASK="format"
     - name: "Build docker image"
       services:
