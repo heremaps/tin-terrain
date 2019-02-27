@@ -322,5 +322,34 @@ TEST_CASE("Mesh::check_tin_properties detects unreferenced vertices")
     CHECK(!m.check_tin_properties());
 }
 
+TEST_CASE("Mesh::compute_normals normals")
+{
+    Mesh m;
+
+    m.from_decomposed(
+        {
+            {0, 0, 1},
+            {1, 0, 2},
+            {1, 1, 3},
+            {0, 1, 4},
+            {0.5, -1, 5},
+        },
+        {
+            {{0, 1, 2}}, //ccw
+            {{0, 2, 3}}, //ccw
+            {{0, 4, 1}}, //ccw
+        });
+    m.generate_triangles();
+    m.compute_vertex_normals();
+
+    const auto vnormals = m.vertex_normals();
+    CHECK(std::distance(vnormals.begin, vnormals.end) == 5);
+
+    for(auto n = vnormals.begin; n != vnormals.end; ++n)
+    {
+        CHECK((glm::length(*n) - 1.0) < 0.00001);
+    }
+}
+
 } //namespace unittests
 } //namespace tntn
