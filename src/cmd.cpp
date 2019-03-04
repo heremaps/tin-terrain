@@ -30,6 +30,21 @@ namespace tntn {
 
 //forward decl for use in preset commands
 int tin_terrain_commandline_action(std::vector<std::string> args);
+static int main_loop_dem2tintiles(const std::string input_file,
+                                  const std::string meshing_method,
+                                  const int min_zoom,
+                                  const int max_zoom,
+                                  double max_error,
+                                  bool max_error_given,
+                                  const std::string output_basedir,
+                                  std::unique_ptr<MeshWriter> w);
+static int main_loop_dem2tin(const std::string input_file,
+                             const std::string method,
+                             double max_error,
+                             bool max_error_given,
+                             int step,
+                             const std::string output_file,
+                             const FileFormat output_file_format);
 
 typedef int (*subcommand_function_t)(bool need_help,
                                      const po::variables_map&,
@@ -140,6 +155,42 @@ static int subcommand_dem2tintiles(bool need_help,
 
     const std::string meshing_method = local_varmap["method"].as<std::string>();
 
+    if("zemlya" != meshing_method && "terra" != meshing_method)
+    {
+        throw po::error(std::string("unknown method ") + meshing_method);
+    }
+
+    std::unique_ptr<char[]> emergency_memory(new char[16384]);
+
+    try
+    {
+        return main_loop_dem2tintiles(input_file,
+                                      meshing_method,
+                                      min_zoom,
+                                      max_zoom,
+                                      max_error,
+                                      max_error_given,
+                                      output_basedir,
+                                      std::move(w));
+    }
+    catch(std::bad_alloc& exception)
+    {
+        emergency_memory.reset();
+
+        TNTN_LOG_ERROR("tin-terrain has run out of memory.");
+        exit(1);
+    }
+}
+
+static int main_loop_dem2tintiles(const std::string input_file,
+                                  const std::string meshing_method,
+                                  const int min_zoom,
+                                  const int max_zoom,
+                                  double max_error,
+                                  bool max_error_given,
+                                  const std::string output_basedir,
+                                  std::unique_ptr<MeshWriter> w)
+{
     auto input_raster = std::make_unique<RasterDouble>();
 
     if(!load_raster_file(input_file.c_str(), *input_raster))
@@ -147,33 +198,9 @@ static int subcommand_dem2tintiles(bool need_help,
         return false;
     }
 
-    if("zemlya" == meshing_method || "terra" == meshing_method)
+    if(!max_error_given && ("zemlya" == meshing_method || "terra" == meshing_method))
     {
         max_error = input_raster->get_cell_size();
-        if(local_varmap.count("max-error"))
-        {
-            max_error_given = true;
-            max_error = local_varmap["max-error"].as<double>();
-        }
-
-        if(max_error < 0.0)
-        {
-            throw po::error("max-error must be positive");
-        }
-    }
-#if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
-    else if("curvature")
-    {
-        double threshold = 1;
-        if(local_varmap.count("threshold"))
-        {
-            threshold = local_varmap["threshold"].as<double>();
-        }
-    }
-#endif
-    else
-    {
-        throw po::error(std::string("unknown method ") + meshing_method);
     }
 
     RasterOverviews overviews(std::move(input_raster), min_zoom, max_zoom);
@@ -278,17 +305,20 @@ static int subcommand_dem2tin(bool need_help,
 
     // clang-format off
     subdesc.add_options()
-        ("input", po::value<std::string>(), "input filename")
-        ("input-format",po::value<std::string>()->default_value("auto"), "input file format, can be any of: auto, asc, xyz, tiff")
-        ("output", po::value<std::string>(), "output filename")
-        ("output-format", po::value<std::string>()->default_value("auto"), "output file format, can be any of: auto, obj, off, terrain (quantized mesh), json/geojson")
-        ("max-error", po::value<double>(), "max error parameter when using terra or zemlya method")
-        ("step", po::value<int>(), "grid spacing in pixels when using dense method")
+            ("input", po::value<std::string>(), "input filename")
+            ("input-format", po::value<std::string>()->default_value("auto"),
+             "input file format, can be any of: auto, asc, xyz, tiff")
+            ("output", po::value<std::string>(), "output filename")
+            ("output-format", po::value<std::string>()->default_value("auto"),
+             "output file format, can be any of: auto, obj, off, terrain (quantized mesh), json/geojson")
+            ("max-error", po::value<double>(), "max error parameter when using terra or zemlya method")
+            ("step", po::value<int>(), "grid spacing in pixels when using dense method")
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
-        ("threshold", po::value<double>(), "threshold when using curvature method")
-        ("method", po::value<std::string>()->default_value("terra"), "meshing method, valid values are: dense, terra, zemlya, curvature");
+    ("threshold", po::value<double>(), "threshold when using curvature method")
+    ("method", po::value<std::string>()->default_value("terra"), "meshing method, valid values are: dense, terra, zemlya, curvature");
 #else
-        ("method", po::value<std::string>()->default_value("terra"), "meshing method, valid values are: dense, terra, zemlya");
+            ("method", po::value<std::string>()->default_value("terra"),
+             "meshing method, valid values are: dense, terra, zemlya");
 #endif
     // clang-format on
 
@@ -344,6 +374,51 @@ static int subcommand_dem2tin(bool need_help,
 
     const std::string method = local_varmap["method"].as<std::string>();
 
+    bool max_error_given = false;
+    double max_error = 0.0;
+
+    if(local_varmap.count("max-error"))
+    {
+        max_error_given = true;
+        max_error = local_varmap["max-error"].as<double>();
+    }
+
+    int step = 1;
+    if(local_varmap.count("step"))
+    {
+        step = local_varmap["step"].as<int>();
+    }
+
+    std::unique_ptr<char[]> emergency_memory(new char[16384]);
+
+    try
+    {
+        return main_loop_dem2tin(input_file,
+                                 method,
+                                 max_error,
+                                 max_error_given,
+                                 step,
+                                 output_file,
+                                 output_file_format);
+    }
+    catch(std::bad_alloc& exception)
+    {
+        emergency_memory.reset();
+
+        TNTN_LOG_ERROR("tin-terrain has run out of memory.");
+        exit(1);
+    }
+
+}
+
+static int main_loop_dem2tin(const std::string input_file,
+                             const std::string method,
+                             double max_error,
+                             bool max_error_given,
+                             int step,
+                             const std::string output_file,
+                             const FileFormat output_file_format)
+{
     auto raster = std::make_unique<RasterDouble>();
 
     // Import raster file without projection validation
@@ -361,10 +436,9 @@ static int subcommand_dem2tin(bool need_help,
 
     if(method == "terra" || method == "zemlya")
     {
-        double max_error = raster->get_cell_size();
-        if(local_varmap.count("max-error"))
+        if(!max_error_given)
         {
-            max_error = local_varmap["max-error"].as<double>();
+            max_error = raster->get_cell_size();
         }
 
         if("terra" == method)
@@ -380,34 +454,9 @@ static int subcommand_dem2tin(bool need_help,
     }
     else if(method == "dense")
     {
-        int step = 1;
-        if(local_varmap.count("step"))
-        {
-            step = local_varmap["step"].as<int>();
-        }
-
         TNTN_LOG_INFO("generating dense mesh grid ...");
         mesh = generate_tin_dense_quadwalk(*raster, step);
     }
-#if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
-    else if(method == "curvature")
-    {
-        if(!local_varmap.count("threshold"))
-        {
-            throw po::error("no --threshold given, required for this method");
-        }
-
-        double gradient_threshold = local_varmap["threshold"].as<double>();
-
-        if(gradient_threshold <= 0.0)
-        {
-            throw po::error("threshold must be larger than zero");
-        }
-
-        TNTN_LOG_INFO("performing curverture integral meshing...");
-        mesh = generate_tin_curvature(*raster, gradient_threshold);
-    }
-#endif
     else
     {
         throw po::error(std::string("unknown method ") + method);
