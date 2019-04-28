@@ -147,7 +147,7 @@ bool create_tiles_for_zoom_level(const RasterDouble& dem,
                 auto file_path =
                     tile_dir / (std::to_string(ty) + "." + mesh_writer.file_extension());
 
-                if(!tm.dumpTile(tx, ty, zoom, file_path.c_str(), mesh_writer))
+                if(!tm.dumpTile(tx, ty, zoom, file_path.string().c_str(), mesh_writer))
                 {
                     TNTN_LOG_ERROR("error dumping tile z:{} x:{} y:{}", zoom, tx, ty);
                     return false;

@@ -4,6 +4,11 @@
 #include <string.h>
 #include "tntn/MeshMode.h"
 
+#ifdef _MSC_VER 
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
+#endif
+
 namespace tntn {
 
 class FileFormat
