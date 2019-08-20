@@ -220,7 +220,7 @@ void raster_tools::find_minmax(const RasterDouble& raster, double& min_val, doub
 
 /**
 	 Treat raster as a DEM and return 3D bounding box
-       
+
      @return 3d bounding box
 	*/
 BBox3D raster_tools::get_bounding_box3d(const RasterDouble& raster)
@@ -374,7 +374,7 @@ double raster_tools::sample_nearest_valid_avg(const RasterDouble& src,
         const int64_t dest_r = row + y;
         const int64_t dest_c = column + x;
         double z = subsample_raster_3x3(src, no_data_value, w, h, dest_r, dest_c);
-        if(!is_no_data(z, no_data_value))
+        if(!is_no_data(z, no_data_value) && avg_count < MAX_AVERAGING_SAMPLES)
         {
             to_average[avg_count] = z;
             avg_count++;
