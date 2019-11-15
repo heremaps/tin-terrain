@@ -360,6 +360,11 @@ static int subcommand_dem2tin(bool need_help,
 
     const auto t_start = std::chrono::high_resolution_clock::now();
 
+    if(method != "terra" && local_varmap.count("max-iterations"))
+    {
+        throw po::error("parameter --max-iterations implemented for terra method only");
+    }
+
     if(method == "terra" || method == "zemlya")
     {
         double max_error = raster->get_cell_size();
