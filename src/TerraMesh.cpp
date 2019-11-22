@@ -13,7 +13,7 @@
 namespace tntn {
 namespace terra {
 
-void TerraMesh::greedy_insert(double max_error)
+void TerraMesh::greedy_insert(double max_error, int max_iterations)
 {
     m_max_error = max_error;
     m_counter = 0;
@@ -56,12 +56,14 @@ void TerraMesh::greedy_insert(double max_error)
         t = t->getLink();
     }
 
+    int iterations_count = 0;
     // Iterate until the error threshold is met
     while(!m_candidates.empty())
     {
         Candidate candidate = m_candidates.grab_greatest();
 
         if(candidate.importance < m_max_error) continue;
+        if(max_iterations && iterations_count >= max_iterations) continue;
 
         // Skip if the candidate is not the latest
         if(m_token.value(candidate.y, candidate.x) != candidate.token) continue;
@@ -70,6 +72,7 @@ void TerraMesh::greedy_insert(double max_error)
 
         //TNTN_LOG_DEBUG("inserting point: ({}, {}, {})", candidate.x, candidate.y, candidate.z);
         this->insert(glm::dvec2(candidate.x, candidate.y), candidate.triangle);
+        iterations_count++;
     }
 
     TNTN_LOG_INFO("finished greedy insertion");
