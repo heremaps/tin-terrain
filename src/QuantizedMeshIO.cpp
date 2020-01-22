@@ -2,6 +2,7 @@
 
 #include "tntn/OFFReader.h"
 #include "tntn/logging.h"
+#include "tntn/HorizonOcclusion.h"
 #include "tntn/tntn_assert.h"
 #include "tntn/BinaryIO.h"
 
@@ -298,7 +299,7 @@ static void write_qmheader(BinaryIO& bio,
     bio.write_double(qmheader.horizon_occlusion.z, e);
 }
 
-bool point_to_ecef(Vertex& p)
+bool point_to_ecef(Vertex &p)
 {
     OGRSpatialReference mercator;
     OGRSpatialReference ecef;
@@ -332,8 +333,8 @@ bool write_mesh_as_qm(const std::shared_ptr<FileLike>& f,
     BinaryIOErrorTracker e;
     QuantizedMeshLog log;
 
-    // Write QM Header
     Vertex c = (bbox.max + bbox.min) / 2.0;
+    SimpleRange<const Vertex*> verts = m.vertices();
 
     if(!point_to_ecef(c))
     {
@@ -345,15 +346,20 @@ bool write_mesh_as_qm(const std::shared_ptr<FileLike>& f,
     header.center = c;
     header.bounding_sphere_center = c;
     header.BoundingSphereRadius = glm::distance(bbox.min.xy(), bbox.max.xy());
-
+    
     header.MinimumHeight = bbox.min.z;
     header.MaximumHeight = bbox.max.z;
 
-    // FIXME: is there a better choice for a horizon occlusion point?
-    // Currently it's the center of tile elevated to bbox's max Z
+    // TODO: Properly alculate the horizon occlusion point based on the sphere center and the
+    // vertex points. There is a bug in this module which causes Cesium to not display the earth
+    // in lots of situations.
+    // header.horizon_occlusion = ocp_fromPoints(verts, c);
+
+    // Use the middle of the roof of the BBOX for now, its not perfect but its good enough
     header.horizon_occlusion = c;
     header.horizon_occlusion.z = bbox.max.z;
 
+    // Write QM Header
     log.QuantizedMeshHeader_start = bio.write_pos();
     write_qmheader(bio, e, header);
     if(e.has_error())
@@ -375,7 +381,7 @@ bool write_mesh_as_qm(const std::shared_ptr<FileLike>& f,
     std::vector<uint16_t> vs;
     std::vector<uint16_t> hs;
 
-    const uint32_t nvertices = m.vertices().distance();
+    const uint32_t nvertices = verts.distance();
 
     us.reserve(nvertices);
     vs.reserve(nvertices);

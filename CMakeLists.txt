@@ -145,6 +145,9 @@ set(TNTN_SOURCE_FILES
     include/tntn/File.h
     src/File.cpp
 
+    include/tntn/HorizonOcclusion.h
+    src/HorizonOcclusion.cpp
+
     include/tntn/QuantizedMeshIO.h
     src/QuantizedMeshIO.cpp
 
