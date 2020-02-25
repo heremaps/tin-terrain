@@ -91,6 +91,12 @@ struct QuantizedMeshHeader
     // double HorizonOcclusionPointZ;
 };
 
+enum QuantizedMeshExtensionList
+{
+    QMExtensionNormals = 1,
+    QMExtensionWaterMask = 2
+};
+
 namespace detail {
 
 uint16_t zig_zag_encode(int16_t i)
@@ -317,6 +323,37 @@ bool point_to_ecef(Vertex& p)
     return (bool)tr->Transform(1, &p.x, &p.y, &p.z);
 }
 
+void oct_encode(const Normal& v, uint8_t out[2])
+{
+    const glm::dvec2 p = v.xy * (1.0 / (abs(v.x) + abs(v.y) + abs(v.z)));
+    const auto signNotZero = glm::dvec2(v.x >= 0 ? 1.0 : -1.0, v.y > 0 ? 1.0 : -1.0);
+    const glm::dvec2 abs_v = p.yx;
+    glm::dvec2 ov = (v.z <= 0.0) ? ((1.0 - glm::abs(abs_v)) * signNotZero) : p;
+
+    ov = (ov + 1.0) / 2.0;
+
+    out[0] = static_cast<uint8_t>(ov.x * 255);
+    out[1] = static_cast<uint8_t>(ov.y * 255);
+}
+
+void write_normals(BinaryIO& bio,
+                   BinaryIOErrorTracker& e,
+                   const SimpleRange<const Normal*>& normals)
+{
+    // Write extension header
+    bio.write_byte(QMExtensionNormals, e);
+    bio.write_uint32(normals.distance() * 2, e);
+
+    uint8_t oct_normal[2];
+
+    for(auto n = normals.begin; n != normals.end; n++)
+    {
+        oct_encode(*n, oct_normal);
+        bio.write_byte(oct_normal[0], e);
+        bio.write_byte(oct_normal[1], e);
+    }
+}
+
 bool write_mesh_as_qm(const std::shared_ptr<FileLike>& f,
                       const Mesh& m,
                       const BBox3D& bbox,
@@ -496,6 +533,11 @@ bool write_mesh_as_qm(const std::shared_ptr<FileLike>& f,
         write_indices<uint32_t>(bio, e, northlings);
     }
 
+    if(m.has_normals())
+    {
+        write_normals(bio, e, m.vertex_normals());
+    }
+
     if(e.has_error())
     {
         TNTN_LOG_ERROR("{} in file {}", e.to_string(), f->name());
@@ -503,6 +545,7 @@ bool write_mesh_as_qm(const std::shared_ptr<FileLike>& f,
     }
 
     TNTN_LOG_INFO("writer log: {}", log.to_string());
+
     return true;
 }
 

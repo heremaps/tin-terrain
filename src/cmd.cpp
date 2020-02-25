@@ -55,6 +55,7 @@ static int subcommand_dem2tintiles(bool need_help,
         ("max-error", po::value<double>(), "max error parameter when using terra or zemlya method")
         ("step", po::value<int>()->default_value(1), "grid spacing in pixels when using dense method")
         ("output-format", po::value<std::string>()->default_value("terrain"), "output tiles in terrain (quantized mesh) or obj")
+		("normals", po::bool_switch()->default_value(false), "generate normals for terrain")
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
         ("method", po::value<std::string>()->default_value("terra"), "meshing algorithm. one of: terra, zemlya, curvature or dense")
         ("threshold", po::value<double>(), "threshold when using curvature method");
@@ -176,6 +177,8 @@ static int subcommand_dem2tintiles(bool need_help,
         throw po::error(std::string("unknown method ") + meshing_method);
     }
 
+    bool write_normals = local_varmap["normals"].as<bool>();
+
     RasterOverviews overviews(std::move(input_raster), min_zoom, max_zoom);
 
     RasterOverview overview;
@@ -214,6 +217,7 @@ static int subcommand_dem2tintiles(bool need_help,
         if(!create_tiles_for_zoom_level(*overview.raster,
                                         partitions,
                                         zoom_level,
+                                        write_normals,
                                         output_basedir,
                                         max_error,
                                         meshing_method,
