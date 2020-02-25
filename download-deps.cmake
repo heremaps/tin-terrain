@@ -17,17 +17,17 @@ function(string_ends_with STR ENDING RESULT_VARIABLE_NAME)
         set(${RESULT_VARIABLE_NAME} FALSE PARENT_SCOPE)
         return()
     endif()
-    
+
     math(EXPR BEGIN "${STR_LEN}-${ENDING_LEN}")
     string(SUBSTRING "${STR}" ${BEGIN} ${ENDING_LEN} STR_ENDING)
-    if(STR_ENDING STREQUAL ENDING)    
+    if(STR_ENDING STREQUAL ENDING)
         set(${RESULT_VARIABLE_NAME} TRUE PARENT_SCOPE)
         return()
     else()
         set(${RESULT_VARIABLE_NAME} FALSE PARENT_SCOPE)
         return()
     endif()
-    
+
 endfunction()
 
 function(string_rot13 INPUT_STR RESULT_VARIABLE_NAME)
@@ -52,25 +52,25 @@ endfunction(string_rot13)
 function(download_verify_unpack URL DOWNLOAD_FILENAME SHA512HASH)
     if((DEFINED TNTN_DOWNLOAD_DEPS) AND (NOT TNTN_DOWNLOAD_DEPS))
         message(STATUS "dependency download disabled, not doing anything")
-        return()        
+        return()
     endif()
-    
+
     string(SUBSTRING "${SHA512HASH}" 0 32 SHORTHASH)
     set(FINISHED_TOUCHFILENAME "${DOWNLOAD_FILENAME}.${SHORTHASH}.finished")
-    
+
     if(EXISTS "${FINISHED_TOUCHFILENAME}")
         message(STATUS "file ${DOWNLOAD_FILENAME} already downloaded and unpacked, not doing anything")
         return()
     endif()
-    
-    get_filename_component(DOWNLOAD_FILENAME_DIR "${DOWNLOAD_FILENAME}" DIRECTORY)     
-    get_filename_component(DOWNLOAD_FILENAME_NAME "${DOWNLOAD_FILENAME}" NAME)    
+
+    get_filename_component(DOWNLOAD_FILENAME_DIR "${DOWNLOAD_FILENAME}" DIRECTORY)
+    get_filename_component(DOWNLOAD_FILENAME_NAME "${DOWNLOAD_FILENAME}" NAME)
 
     if(NOT EXISTS "${DOWNLOAD_FILENAME_DIR}")
         file_mkdir("${DOWNLOAD_FILENAME_DIR}")
     endif()
-    
-    if(NOT EXISTS "${DOWNLOAD_FILENAME}")    
+
+    if(NOT EXISTS "${DOWNLOAD_FILENAME}")
         message(STATUS "downloading ${URL} to ${DOWNLOAD_FILENAME}...")
         file(DOWNLOAD "${URL}" "${DOWNLOAD_FILENAME}"
             TLS_VERIFY ON
@@ -86,7 +86,7 @@ function(download_verify_unpack URL DOWNLOAD_FILENAME SHA512HASH)
     else()
         message(STATUS "${DOWNLOAD_FILENAME} already downloaded")
     endif()
-    
+
     if(NOT "${SHA512HASH}" STREQUAL "NOHASHCHECK")
         message(STATUS "checking hashes of downloaded file...")
         file(SHA512 "${DOWNLOAD_FILENAME}" DOWNLOAD_FILE_SHA512)
@@ -95,12 +95,12 @@ function(download_verify_unpack URL DOWNLOAD_FILENAME SHA512HASH)
             return()
         endif()
     endif()
-    
+
 
     string_ends_with("${DOWNLOAD_FILENAME}" ".tar.gz" FILENAME_IS_TAR_GZ)
-    string_ends_with("${DOWNLOAD_FILENAME}" ".tar.gz" FILENAME_IS_TGZ)       
+    string_ends_with("${DOWNLOAD_FILENAME}" ".tar.gz" FILENAME_IS_TGZ)
     string_ends_with("${DOWNLOAD_FILENAME}" ".zip" FILENAME_IS_ZIP)
-    
+
     if(FILENAME_IS_TAR_GZ OR FILENAME_IS_TGZ OR FILENAME_IS_ZIP)
         message(STATUS "unpacking downloaded file in ${DOWNLOAD_FILENAME_DIR}...")
         execute_process(
@@ -108,14 +108,14 @@ function(download_verify_unpack URL DOWNLOAD_FILENAME SHA512HASH)
             COMMAND "${CMAKE_COMMAND}" -E tar -xzf "${DOWNLOAD_FILENAME_NAME}"
             RESULT_VARIABLE UNPACK_ERROR_CODE
         )
-    
+
         if(NOT UNPACK_ERROR_CODE EQUAL 0)
             message(STATUS "error unpacking ${DOWNLOAD_FILENAME}, errno = ${UNPACK_ERROR_CODE}")
             return()
         endif()
     endif()
-    
-    
+
+
     file_touch("${FINISHED_TOUCHFILENAME}")
 endfunction()
 
@@ -135,7 +135,7 @@ download_verify_unpack(
 download_verify_unpack(
     "https://github.com/catchorg/Catch2/releases/download/v2.3.0/catch.hpp"
     "${CMAKE_SOURCE_DIR}/3rdparty/Catch2-2.3.0/catch.hpp"
-    "62716213504195f0482f2aeb1fbdbc20dd96b5d7d3024bc68eaf19a3ba218d3a359163d17d5b6dd93ecc6c2a68573d9fdf9fae596f5f44bb6bab4b0598ad2790"    
+    "62716213504195f0482f2aeb1fbdbc20dd96b5d7d3024bc68eaf19a3ba218d3a359163d17d5b6dd93ecc6c2a68573d9fdf9fae596f5f44bb6bab4b0598ad2790"
 )
 
 if(TNTN_TEST)
@@ -143,14 +143,14 @@ if(TNTN_TEST)
     download_verify_unpack(
         "http://oe.oregonexplorer.info/craterlake/products/dem/dems_10m.zip"
         "${CMAKE_SOURCE_DIR}/3rdparty/craterlake/dems_10m.zip"
-        "c677ac64dd3e443edebf0cdbb8e8785eb2d1dee864d1011b00bd0ef1745c72e4305f81d6630db240a31205d3b7ebed2dd0d52f468c0222013d6d79312a830ae0"    
+        "c677ac64dd3e443edebf0cdbb8e8785eb2d1dee864d1011b00bd0ef1745c72e4305f81d6630db240a31205d3b7ebed2dd0d52f468c0222013d6d79312a830ae0"
     )
-    
+
     #see also https://data.gov.uk/dataset/lidar-composite-dsm-50cm1
     #data is in EPSG:27700 aka OSGB 1936 / British National Grid
     #look at tile tq3389_DSM_50CM.asc - Tottenham for an interesting city DSM
     download_verify_unpack(
-        "https://www.geostore.com/environment-agency/rest/product/download/66314096-70be-11e8-9314-8cdcd4b4861c"
+        "https://environment.data.gov.uk/UserDownloads/interactive/dcbcae4faa49490186edaa3b991025f549808/LIDARCOMP/LIDAR-DSM-50CM-TQ38nw.zip"
         "${CMAKE_SOURCE_DIR}/3rdparty/uk-lidar-composite/LIDAR-DSM-50CM-TQ38nw.zip"
         "f0c8f1cfbffba35122f1be6ba77df15a1f0c666cf4d49b44410bc9ea782cde46c1c24d9e0936aaf477d6a717cfcea64ebc8421155664929cb828e9806748c16b"
     )

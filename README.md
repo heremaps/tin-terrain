@@ -1,8 +1,10 @@
 # TIN Terrain
 
+[![Build Status](https://travis-ci.com/heremaps/tin-terrain.svg?branch=master)](https://travis-ci.com/heremaps/tin-terrain)
+
 TIN Terrain is a command-line tool for converting heightmaps presented in GeoTIFF format into tiled optimized meshes (Triangulated Irregular Network) with different levels of details.
 
-Check out [heremaps/quantized-mesh-viewer](https://github.com/heremaps/quantized-mesh-viewer) for examples of rendering output in [Cesium.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/map/surface-provider.js) and [Three.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/tile/index.js)
+Check out [heremaps/quantized-mesh-viewer](https://github.com/heremaps/quantized-mesh-viewer) for examples of rendering output in [Cesium.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/map/surface-provider.js) and [Three.js](https://github.com/heremaps/quantized-mesh-viewer/blob/master/src/tile/index.js).
 
 Note: This is experimental code, expect changes.
 
@@ -14,6 +16,9 @@ Note: This is experimental code, expect changes.
 * Transforms heightmap into a TIN mesh with a given max-error parameter and outputs into `.obj` format
 * Transforms heightmap into tiled TIN mesh for a given zoom range and outputs tiled pyramid into [quantized-mesh-1.0](https://github.com/AnalyticalGraphicsInc/quantized-mesh) terrain format
 
+## Let us know what you think!
+
+You can help us a lot to prioritize issues in tin-terrain if you submit a [short anonymous survey](https://survey.research-feedback.com/jfe/form/SV_6qVft7VrQfwsDml)
 
 ## Installation
 
