@@ -29,7 +29,7 @@ class TerraMesh : public TerraBaseMesh
                             const double no_data_value);
 
   public:
-    void greedy_insert(double max_error);
+    void greedy_insert(double max_error, int max_iterations);
     void scan_triangle(dt_ptr t) override;
     std::unique_ptr<Mesh> convert_to_mesh();
 };
