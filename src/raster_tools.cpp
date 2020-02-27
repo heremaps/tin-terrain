@@ -324,22 +324,6 @@ static double subsample_raster_3x3(const RasterDouble& src,
 
 static constexpr int MAX_AVERAGING_SAMPLES = 64;
 
-static inline double average(const std::array<double, MAX_AVERAGING_SAMPLES>& to_average,
-                             const int avg_count)
-{
-    if(avg_count == 0)
-    {
-        return NAN;
-    }
-    double sum = 0;
-    for(int i = 0; i < MAX_AVERAGING_SAMPLES; i++)
-    {
-        sum += to_average[i];
-    }
-    const double avg = sum / avg_count;
-    return avg;
-}
-
 double raster_tools::sample_nearest_valid_avg(const RasterDouble& src,
                                               const unsigned int _row,
                                               const unsigned int _column,
@@ -365,19 +349,18 @@ double raster_tools::sample_nearest_valid_avg(const RasterDouble& src,
         return z;
     }
 
-    std::array<double, MAX_AVERAGING_SAMPLES> to_average;
-    std::fill(to_average.begin(), to_average.end(), 0.0);
+    double avg = 0.0;
     int avg_count = 0;
 
-    auto putpixel = [row, column, w, h, no_data_value, &src, &to_average, &avg_count](int x,
+    auto putpixel = [row, column, w, h, no_data_value, &src, &avg, &avg_count](int x,
                                                                                       int y) {
         const int64_t dest_r = row + y;
         const int64_t dest_c = column + x;
         double z = subsample_raster_3x3(src, no_data_value, w, h, dest_r, dest_c);
         if(!is_no_data(z, no_data_value))
         {
-            to_average[avg_count] = z;
-            avg_count++;
+          avg_count++;
+          avg = avg + ( z - avg ) / (double) avg_count;
         }
     };
 
@@ -417,13 +400,7 @@ double raster_tools::sample_nearest_valid_avg(const RasterDouble& src,
         }
     }
 
-    //short path for only one sample
-    if(avg_count == 1)
-    {
-        return to_average[0];
-    }
-
-    return average(to_average, avg_count);
+    return ( avg_count == 0 ? NAN : avg );
 }
 
 } // namespace tntn

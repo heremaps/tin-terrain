@@ -55,6 +55,7 @@ static int subcommand_dem2tintiles(bool need_help,
         ("max-error", po::value<double>(), "max error parameter when using terra or zemlya method")
         ("step", po::value<int>()->default_value(1), "grid spacing in pixels when using dense method")
         ("output-format", po::value<std::string>()->default_value("terrain"), "output tiles in terrain (quantized mesh) or obj")
+		("normals", po::bool_switch()->default_value(false), "generate normals for terrain")
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
         ("method", po::value<std::string>()->default_value("terra"), "meshing algorithm. one of: terra, zemlya, curvature or dense")
         ("threshold", po::value<double>(), "threshold when using curvature method");
@@ -176,6 +177,8 @@ static int subcommand_dem2tintiles(bool need_help,
         throw po::error(std::string("unknown method ") + meshing_method);
     }
 
+    bool write_normals = local_varmap["normals"].as<bool>();
+
     RasterOverviews overviews(std::move(input_raster), min_zoom, max_zoom);
 
     RasterOverview overview;
@@ -214,6 +217,7 @@ static int subcommand_dem2tintiles(bool need_help,
         if(!create_tiles_for_zoom_level(*overview.raster,
                                         partitions,
                                         zoom_level,
+                                        write_normals,
                                         output_basedir,
                                         max_error,
                                         meshing_method,
@@ -283,6 +287,7 @@ static int subcommand_dem2tin(bool need_help,
         ("output", po::value<std::string>(), "output filename")
         ("output-format", po::value<std::string>()->default_value("auto"), "output file format, can be any of: auto, obj, off, terrain (quantized mesh), json/geojson")
         ("max-error", po::value<double>(), "max error parameter when using terra or zemlya method")
+        ("max-iterations", po::value<int>()->default_value(0), "max add point iterations when using terra or zemlya method")
         ("step", po::value<int>(), "grid spacing in pixels when using dense method")
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
         ("threshold", po::value<double>(), "threshold when using curvature method")
@@ -359,6 +364,11 @@ static int subcommand_dem2tin(bool need_help,
 
     const auto t_start = std::chrono::high_resolution_clock::now();
 
+    if(method != "terra" && local_varmap.count("max-iterations"))
+    {
+        throw po::error("parameter --max-iterations implemented for terra method only");
+    }
+
     if(method == "terra" || method == "zemlya")
     {
         double max_error = raster->get_cell_size();
@@ -370,7 +380,7 @@ static int subcommand_dem2tin(bool need_help,
         if("terra" == method)
         {
             TNTN_LOG_INFO("performing terra meshing...");
-            mesh = generate_tin_terra(std::move(raster), max_error);
+            mesh = generate_tin_terra(std::move(raster), max_error, local_varmap["max-iterations"].as<int>());
         }
         else if("zemlya" == method)
         {

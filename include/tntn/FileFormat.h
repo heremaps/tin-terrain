@@ -4,6 +4,11 @@
 #include <string.h>
 #include "tntn/MeshMode.h"
 
+#ifdef _MSC_VER 
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
+#endif
+
 namespace tntn {
 
 class FileFormat
@@ -114,8 +119,8 @@ class FileFormat
         switch(m_value)
         {
             case OBJ: //fallthrough
-            case OFF: //fallthrough
-            case TERRAIN: return MeshMode::decomposed;
+            case OFF: return MeshMode::decomposed;
+            case TERRAIN: return MeshMode::triangles;
             default: return MeshMode::none;
         }
     }
