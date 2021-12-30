@@ -54,7 +54,7 @@ static int subcommand_dem2tintiles(bool need_help,
         ("min-zoom", po::value<int>()->default_value(-1), "minimum zoom level to generate tiles for will guesstimate from resolution if not provided.")
         ("max-error", po::value<double>(), "max error parameter when using terra or zemlya method")
         ("step", po::value<int>()->default_value(1), "grid spacing in pixels when using dense method")
-        ("output-format", po::value<std::string>()->default_value("terrain"), "output tiles in terrain (quantized mesh) or obj")
+        ("output-format", po::value<std::string>()->default_value("terrain"), "output tiles in terrain (quantized mesh), terraingz (gzipped terrain), or obj")
 #if defined(TNTN_USE_ADDONS) && TNTN_USE_ADDONS
         ("method", po::value<std::string>()->default_value("terra"), "meshing algorithm. one of: terra, zemlya, curvature or dense")
         ("threshold", po::value<double>(), "threshold when using curvature method");
@@ -131,6 +131,10 @@ static int subcommand_dem2tintiles(bool need_help,
     else if(local_varmap["output-format"].as<std::string>() == "terrain")
     {
         w.reset(new QuantizedMeshWriter());
+    }
+    else if(local_varmap["output-format"].as<std::string>() == "terraingz")
+    {
+        w.reset(new QuantizedMeshWriter(true));
     }
     else
     {
@@ -254,6 +258,7 @@ static FileFormat validate_output_format_for_mesh(const std::string& output_file
         FileFormat::OBJ,
         FileFormat::OFF,
         FileFormat::TERRAIN,
+        FileFormat::TERRAINGZ,
         FileFormat::JSON,
         FileFormat::GEOJSON,
     };

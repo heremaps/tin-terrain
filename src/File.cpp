@@ -1,9 +1,11 @@
 #include "tntn/File.h"
 #include "tntn/logging.h"
+#include "tntn/tntn_assert.h"
 
 #include <cstdio>
-#include <errno.h>
+#include <cerrno>
 #include <limits>
+#include <zlib.h>
 
 namespace tntn {
 
@@ -400,6 +402,29 @@ FileLike::position_type getline(FileLike::position_type from_offset,
         return 0;
     }
     return getline(from_offset, *f, str);
+}
+
+GZipWriteFile::~GZipWriteFile()
+{
+    auto* file = gzopen(m_filename.c_str(), "w9");
+    {
+        const auto err = errno;
+        if (file == nullptr) {
+            TNTN_LOG_ERROR("gzopen({}, {}) = {} / errno = {}", m_filename.c_str(), "w+9", file != nullptr, err);
+            return;
+        }
+        TNTN_LOG_TRACE("gzopen({}, {}) = {} / errno = {}", m_filename.c_str(), "w+9", file != nullptr, err);
+    }
+
+    TNTN_ASSERT(size_t(m_memory_file.m_data.size()) < size_t(std::numeric_limits<unsigned>::max()));
+    const auto n_uncompressed_bytes_written = gzwrite(file, voidpc(m_memory_file.m_data.data()), unsigned(m_memory_file.size()));
+    TNTN_ASSERT(n_uncompressed_bytes_written == int(m_memory_file.size()));
+
+    const auto err = gzclose(file);
+    if(err != Z_OK)
+    {
+        TNTN_LOG_DEBUG("gzclose on {} failed with errno {}", m_filename, err);
+    }
 }
 
 } // namespace tntn

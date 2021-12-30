@@ -53,6 +53,8 @@ find_package(Boost REQUIRED COMPONENTS
     system
 )
 
+find_package(ZLIB REQUIRED)
+
 include("download-deps.cmake")
 find_path(TNTN_LIBGLM_SOURCE_DIR NAMES "glm/glm.hpp" HINTS "${CMAKE_SOURCE_DIR}/3rdparty/glm-0.9.9.0/")
 find_path(TNTN_LIBFMT_SOURCE_DIR NAMES "include/fmt/format.h" HINTS "${CMAKE_SOURCE_DIR}/3rdparty/fmt-5.1.0/")
@@ -231,6 +233,7 @@ target_link_libraries(tntn
     
     PRIVATE
     ${GDAL_LIBRARY}
+    ZLIB::ZLIB
 )
 
 add_executable(tin-terrain

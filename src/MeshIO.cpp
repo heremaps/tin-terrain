@@ -25,6 +25,10 @@ bool write_mesh_to_file(const char* filename, const Mesh& m, const FileFormat& f
     {
         return write_mesh_as_qm(filename, m);
     }
+    else if(f == FileFormat::TERRAINGZ)
+    {
+        return write_mesh_as_qm(filename, m, true);
+    }
     else if(f == FileFormat::JSON || f == FileFormat::GEOJSON)
     {
         return write_mesh_as_geojson(filename, m);

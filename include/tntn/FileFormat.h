@@ -21,6 +21,7 @@ class FileFormat
         GEOJSON = 7,
         TIFF = 8,
         TIF = 9,
+        TERRAINGZ = 10,
     };
 
     FileFormat() = default;
@@ -56,6 +57,7 @@ class FileFormat
             case OBJ: return "obj";
             case ASC: return "asc";
             case XYZ: return "xyz";
+            case TERRAINGZ: "terrain.gz";
             case TERRAIN: return "terrain";
             case JSON: return "json";
             case GEOJSON: return "geojson";
@@ -81,6 +83,8 @@ class FileFormat
             return XYZ;
         else if(strcasecmp(s, "terrain") == 0)
             return TERRAIN;
+        else if(strcasecmp(s, "terrain.gz") == 0)
+            return TERRAINGZ;
         else if(strcasecmp(s, "json") == 0)
             return JSON;
         else if(strcasecmp(s, "geojson") == 0)
@@ -113,8 +117,9 @@ class FileFormat
     {
         switch(m_value)
         {
-            case OBJ: //fallthrough
-            case OFF: //fallthrough
+            case OBJ: [[fallthrough]];
+            case OFF: [[fallthrough]];
+            case TERRAINGZ: [[fallthrough]];
             case TERRAIN: return MeshMode::decomposed;
             default: return MeshMode::none;
         }
