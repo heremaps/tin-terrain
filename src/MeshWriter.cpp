@@ -16,7 +16,7 @@ std::string ObjMeshWriter::file_extension()
 
 bool QuantizedMeshWriter::write_mesh_to_file(const char* filename, Mesh& mesh, const BBox3D& bbox)
 {
-    return write_mesh_as_qm(filename, mesh, bbox, true);
+    return write_mesh_as_qm(filename, mesh, bbox, true, m_gzipped);
 }
 
 std::string QuantizedMeshWriter::file_extension()

@@ -17,11 +17,12 @@ int16_t zig_zag_decode(uint16_t i);
 } //namespace detail
 
 // unsigned int zig_zag_encode(int i);
-bool write_mesh_as_qm(const char* filename, const Mesh& m);
+bool write_mesh_as_qm(const char* filename, const Mesh& m, bool compress = false);
 bool write_mesh_as_qm(const char* filename,
                       const Mesh& m,
                       const BBox3D& bbox,
-                      bool mesh_is_rescaled = false);
+                      bool mesh_is_rescaled = false,
+                      bool compress = false);
 
 bool write_mesh_as_qm(const std::shared_ptr<FileLike>& f, const Mesh& m);
 bool write_mesh_as_qm(const std::shared_ptr<FileLike>& f,

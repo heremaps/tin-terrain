@@ -144,8 +144,11 @@ class File : public FileLike
     std::unique_ptr<FileImpl> m_impl;
 };
 
+class GZipWriteFile;
+
 class MemoryFile : public FileLike
 {
+    friend class GZipWriteFile;
   public:
     std::string name() const override { return std::string(); }
 
@@ -163,6 +166,29 @@ class MemoryFile : public FileLike
   private:
     std::vector<unsigned char> m_data;
     bool m_is_good = true;
+};
+
+class GZipWriteFile : public FileLike {
+  public:
+    GZipWriteFile(const std::string& filename) : m_filename(filename) {}
+    ~GZipWriteFile() override;
+
+    std::string name() const override { return m_filename; }
+
+    bool is_good() override { return m_memory_file.is_good();}
+    position_type size() override { return m_memory_file.size(); }
+
+    size_t read(position_type from_offset, unsigned char* buffer, size_t size_of_buffer) override { return m_memory_file.read(from_offset, buffer, size_of_buffer); }
+    using FileLike::read; //import convenience overloads
+
+    bool write(position_type to_offset, const unsigned char* data, size_t data_size) override { return m_memory_file.write(to_offset, data, data_size); }
+    using FileLike::write; //import convenience overloads
+
+    void flush() override {} // don't want to write before everything is there. writing in destructor.
+
+  private:
+    std::string m_filename;
+    MemoryFile m_memory_file;
 };
 
 FileLike::position_type getline(FileLike::position_type from_offset,

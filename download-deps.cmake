@@ -141,19 +141,19 @@ download_verify_unpack(
 if(TNTN_TEST)
     #see also http://oe.oregonexplorer.info/craterlake/
     download_verify_unpack(
-        "http://oe.oregonexplorer.info/craterlake/products/dem/dems_10m.zip"
+        "https://oe.oregonexplorer.info/craterlake//products/dem/dems_10m.zip"
         "${CMAKE_SOURCE_DIR}/3rdparty/craterlake/dems_10m.zip"
         "c677ac64dd3e443edebf0cdbb8e8785eb2d1dee864d1011b00bd0ef1745c72e4305f81d6630db240a31205d3b7ebed2dd0d52f468c0222013d6d79312a830ae0"
     )
 
-    #see also https://data.gov.uk/dataset/lidar-composite-dsm-50cm1
-    #data is in EPSG:27700 aka OSGB 1936 / British National Grid
-    #look at tile tq3389_DSM_50CM.asc - Tottenham for an interesting city DSM
-    download_verify_unpack(
-        "https://environment.data.gov.uk/UserDownloads/interactive/dcbcae4faa49490186edaa3b991025f549808/LIDARCOMP/LIDAR-DSM-50CM-TQ38nw.zip"
-        "${CMAKE_SOURCE_DIR}/3rdparty/uk-lidar-composite/LIDAR-DSM-50CM-TQ38nw.zip"
-        "f0c8f1cfbffba35122f1be6ba77df15a1f0c666cf4d49b44410bc9ea782cde46c1c24d9e0936aaf477d6a717cfcea64ebc8421155664929cb828e9806748c16b"
-    )
+#    #see also https://data.gov.uk/dataset/lidar-composite-dsm-50cm1
+#    #data is in EPSG:27700 aka OSGB 1936 / British National Grid
+#    #look at tile tq3389_DSM_50CM.asc - Tottenham for an interesting city DSM
+#    download_verify_unpack(
+#        "https://environment.data.gov.uk/UserDownloads/interactive/dcbcae4faa49490186edaa3b991025f549808/LIDARCOMP/LIDAR-DSM-50CM-TQ38nw.zip"
+#        "${CMAKE_SOURCE_DIR}/3rdparty/uk-lidar-composite/LIDAR-DSM-50CM-TQ38nw.zip"
+#        "f0c8f1cfbffba35122f1be6ba77df15a1f0c666cf4d49b44410bc9ea782cde46c1c24d9e0936aaf477d6a717cfcea64ebc8421155664929cb828e9806748c16b"
+#    )
 endif()
 
 #https://github.com/boostorg/filesystem/archive/boost-1.68.0.tar.gz
