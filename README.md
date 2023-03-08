@@ -1,3 +1,5 @@
+# NOTE: This repository has been archived as it is no longer maintained. HERE thanks the community for their contributions so far and encourages any interested party to come forward and discuss taking over maintenance.
+
 # TIN Terrain
 
 [![Build Status](https://travis-ci.com/heremaps/tin-terrain.svg?branch=master)](https://travis-ci.com/heremaps/tin-terrain)
