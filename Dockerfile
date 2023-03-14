@@ -1,4 +1,4 @@
-FROM ubuntu:18.10
+FROM ubuntu
 RUN apt-get update
 RUN apt-get --assume-yes install software-properties-common
 RUN apt-get update
