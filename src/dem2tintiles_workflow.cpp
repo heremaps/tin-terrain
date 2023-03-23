@@ -66,6 +66,7 @@ std::vector<Partition> create_partitions_for_zoom_level(const RasterDouble& dem,
 bool create_tiles_for_zoom_level(const RasterDouble& dem,
                                  const std::vector<Partition>& partitions,
                                  int zoom,
+                                 bool include_normals,
                                  const std::string& output_basedir,
                                  const double method_parameter,
                                  const std::string& meshing_method,
@@ -128,7 +129,7 @@ bool create_tiles_for_zoom_level(const RasterDouble& dem,
         }
 
         // Cut the TIN into tiles
-        TileMaker tm;
+        TileMaker tm(include_normals);
         tm.loadMesh(std::move(mesh));
 
         fs::create_directory(fs::path(output_basedir));
@@ -147,7 +148,7 @@ bool create_tiles_for_zoom_level(const RasterDouble& dem,
                 auto file_path =
                     tile_dir / (std::to_string(ty) + "." + mesh_writer.file_extension());
 
-                if(!tm.dumpTile(tx, ty, zoom, file_path.c_str(), mesh_writer))
+                if(!tm.dumpTile(tx, ty, zoom, file_path.string().c_str(), mesh_writer))
                 {
                     TNTN_LOG_ERROR("error dumping tile z:{} x:{} y:{}", zoom, tx, ty);
                     return false;

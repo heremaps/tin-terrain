@@ -8,6 +8,11 @@ option(TNTN_DOWNLOAD_DEPS "download dependencies during cmake configure" ON)
 
 set(CMAKE_CXX_STANDARD 14)
 
+if(MSVC)
+    if(MSVC_VERSION LESS 1910)
+        message(FATAL_ERROR "Visual Studio 2017 version 15.0 or higher is required")
+    endif()
+endif()
 
 # get the current working branch
 execute_process(
@@ -31,14 +36,19 @@ find_package(GDAL REQUIRED)
 if(NOT GDAL_FOUND)
     message(FATAL_ERROR "GDAL not found, cannot proceed")
 endif()
-if(NOT GDAL_CONFIG)
-    message(FATAL_ERROR "gdal-config command not found (not in PATH?), cannot proceed")
-endif()
 
-execute_process(
-  COMMAND ${GDAL_CONFIG} --version
-  OUTPUT_VARIABLE SYSTEM_GDAL_VERSION
-)
+if(GDAL_VERSION)
+    set(SYSTEM_GDAL_VERSION ${GDAL_VERSION})
+else()
+    if(NOT GDAL_CONFIG)
+        message(FATAL_ERROR "gdal-config command not found (not in PATH?), cannot proceed")
+    endif()
+
+    execute_process(
+      COMMAND ${GDAL_CONFIG} --version
+      OUTPUT_VARIABLE SYSTEM_GDAL_VERSION
+    )
+endif()
 
 if(SYSTEM_GDAL_VERSION VERSION_LESS "2.2")
     message(FATAL_ERROR "GDAL version \"${SYSTEM_GDAL_VERSION}\" is too old, at least 2.2 is required")

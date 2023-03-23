@@ -18,6 +18,8 @@ typedef std::array<Vertex, 3> Triangle;
 typedef size_t VertexIndex; //0-based index into an array/vector of vertices
 typedef std::array<VertexIndex, 3> Face;
 
+typedef glm::dvec3 Normal;
+	
 struct Edge
 {
     Edge() = default;

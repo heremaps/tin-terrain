@@ -6,6 +6,10 @@
 #include <string>
 #include <vector>
 
+#ifdef _MSC_VER 
+#define ftello ftell
+#endif
+
 namespace tntn {
 
 class FileLike
