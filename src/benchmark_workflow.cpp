@@ -158,7 +158,7 @@ static bool prepare_output_directory(const fs::path& output_dir, const bool resu
         if(e)
         {
             TNTN_LOG_ERROR("unable to create output directory {} with message: {}",
-                           output_dir.c_str(),
+                           output_dir.string().c_str(),
                            e.message());
             return false;
         }
@@ -167,13 +167,13 @@ static bool prepare_output_directory(const fs::path& output_dir, const bool resu
     //make sure it is a directory
     if(!fs::is_directory(output_dir, e))
     {
-        TNTN_LOG_ERROR("output directory {} is not a directory", output_dir.c_str());
+        TNTN_LOG_ERROR("output directory {} is not a directory", output_dir.string().c_str());
         return false;
     }
     if(e)
     {
         TNTN_LOG_ERROR("filesystem error while checking output directory {} with message: {}",
-                       output_dir.c_str(),
+                       output_dir.string().c_str(),
                        e.message());
         return false;
     }
@@ -183,13 +183,13 @@ static bool prepare_output_directory(const fs::path& output_dir, const bool resu
         //make sure it is empty
         if(!fs::is_empty(output_dir, e))
         {
-            TNTN_LOG_ERROR("output directory {} is not empty", output_dir.c_str());
+            TNTN_LOG_ERROR("output directory {} is not empty", output_dir.string().c_str());
             return false;
         }
         if(e)
         {
             TNTN_LOG_ERROR("filesystem error while checking output directory {} with message: {}",
-                           output_dir.c_str(),
+                           output_dir.string().c_str(),
                            e.message());
             return false;
         }
@@ -662,13 +662,13 @@ static bool write_mesh_as_obj_and_off(const fs::path& parametrization_subdir,
 
     bool rc = true;
     File f;
-    if(f.open(obj_filename.c_str(), File::OM_RWC))
+    if(f.open(obj_filename.string().c_str(), File::OM_RWC))
     {
         rc = rc && write_mesh_as_obj(f, m);
         f.close();
     }
 
-    if(f.open(off_filename.c_str(), File::OM_RWC))
+    if(f.open(off_filename.string().c_str(), File::OM_RWC))
     {
         rc = rc && write_mesh_as_off(f, m);
         f.close();
@@ -688,7 +688,7 @@ static bool write_raster_as_asc_with_prefix(const fs::path& parametrization_subd
     raster_filename = parametrization_subdir / raster_filename;
 
     File f;
-    if(!f.open(raster_filename.c_str(), File::OM_RWC))
+    if(!f.open(raster_filename.string().c_str(), File::OM_RWC))
     {
         return false;
     }
@@ -941,7 +941,7 @@ static bool run_all_dem2tin_method_benchmarks_on_single_file(
 
             //create is_done_file to signal to later resume runs
             File f;
-            f.open(is_done_file.c_str(), File::OM_RWC);
+            f.open(is_done_file.string().c_str(), File::OM_RWC);
         }
     }
     return true;
@@ -1006,7 +1006,7 @@ bool run_dem2tin_method_benchmarks(const std::string& output_dir,
     const auto benchmark_csv_filename = output_dir_p / "tin_terrain_benchmarks.csv";
     if(resume && fs::exists(benchmark_csv_filename))
     {
-        if(!csv_file->open(benchmark_csv_filename.c_str(), File::OM_RW))
+        if(!csv_file->open(benchmark_csv_filename.string().c_str(), File::OM_RW))
         {
             TNTN_LOG_ERROR("unable to open CSV output file {} for resume",
                            benchmark_csv_filename.string());
@@ -1015,7 +1015,7 @@ bool run_dem2tin_method_benchmarks(const std::string& output_dir,
     }
     else
     {
-        if(!csv_file->open(benchmark_csv_filename.c_str(), File::OM_RWC))
+        if(!csv_file->open(benchmark_csv_filename.string().c_str(), File::OM_RWC))
         {
             TNTN_LOG_ERROR("unable to create CSV output file {} for writing",
                            benchmark_csv_filename.string());
