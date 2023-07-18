@@ -114,8 +114,8 @@ class FileFormat
         switch(m_value)
         {
             case OBJ: //fallthrough
-            case OFF: //fallthrough
-            case TERRAIN: return MeshMode::decomposed;
+            case OFF: return MeshMode::decomposed;
+            case TERRAIN: return MeshMode::triangles;
             default: return MeshMode::none;
         }
     }
